@@ -13,11 +13,10 @@ export const SITE_NAV: NavItem[] = [
 ];
 
 export const FOOTER_NAV = [
-  { label: "Pagrindinis", to: "/" },
   { label: "Funkcijos", to: "/#funkcijos" },
+  { label: "Komandos", to: "/dokumentacija#komandos" },
   { label: "Dokumentacija", to: "/dokumentacija" },
   { label: "Pagalba", to: "/pagalba" },
-  { label: "Uptime", to: "/uptime" },
 ] as const;
 
 export const FOOTER_LEGAL = [

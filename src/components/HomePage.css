@@ -478,7 +478,7 @@
   position: relative;
   max-width: 1440px;
   margin: 0 auto;
-  padding: 48px clamp(16px, 4vw, 48px) 32px;
+  padding: 48px clamp(16px, 4vw, 48px) 120px;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -530,10 +530,10 @@
 .cta__aura {
   position: absolute;
   left: 50%;
-  bottom: -10%;
-  width: min(1400px, 160vw);
+  bottom: 0;
+  width: min(1440px, 130vw);
   transform: translateX(-50%);
-  opacity: 0.8;
+  opacity: 0.9;
   pointer-events: none;
   z-index: 0;
 }
@@ -544,7 +544,9 @@
   display: block;
 }
 
-.cta .btn--cta {
+.cta__title,
+.cta .btn--cta,
+.cta__stats {
   position: relative;
   z-index: 2;
 }
@@ -552,6 +554,6 @@
 @media (min-width: 1100px) {
   .cta {
     padding-top: 72px;
-    padding-bottom: 48px;
+    padding-bottom: 140px;
   }
 }

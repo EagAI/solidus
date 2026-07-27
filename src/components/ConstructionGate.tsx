@@ -77,8 +77,7 @@ export default function ConstructionGate({ children }: ConstructionGateProps) {
         <p className="gate__eyebrow">Solidus</p>
         <h1>Website under construction</h1>
         <p className="gate__text">
-          Šiuo metu tvarkome svetainę. Netrukus grįšime su pilnu Solidus
-          patyrimu.
+          Šiuo metu svetainė kuriama.
         </p>
 
         <button type="button" className="gate__access" onClick={openModal}>
