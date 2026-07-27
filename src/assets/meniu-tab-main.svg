@@ -1,0 +1,11 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="1198" height="433" viewBox="0 0 1198 433" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Meniu tab main 1">
+<path id="Vector" d="M1163.09 77.1051H234.415H227.835C210.762 77.1051 198.477 65.1255 198.477 48.0165V27.7141C198.138 12.0282 183.492 1 167.863 1H31.9107C14.8371 0.991731 1 14.8576 1 31.9665V401.025C1 418.134 14.8371 432 31.9107 432H1163.09C1180.16 432 1194 418.134 1194 401.025V108.08C1194 90.9709 1180.16 77.1051 1163.09 77.1051Z" stroke="url(#paint0_linear_0_46)" stroke-width="2" stroke-miterlimit="10"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_0_46" x1="597.5" y1="1" x2="597.5" y2="432" gradientUnits="userSpaceOnUse">
+<stop stop-color="#4AAFFE"/>
+<stop offset="1" stop-color="#B849FF"/>
+</linearGradient>
+</defs>
+</svg>
