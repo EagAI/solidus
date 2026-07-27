@@ -1,0 +1,197 @@
+.updates {
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse 80% 40% at 12% 0%, rgba(73, 174, 254, 0.14), transparent 55%),
+    radial-gradient(ellipse 70% 45% at 88% 8%, rgba(184, 73, 255, 0.12), transparent 50%),
+    #010103;
+  color: #fff;
+}
+
+.updates__hero {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 48px clamp(16px, 4vw, 48px) 24px;
+}
+
+.updates__eyebrow {
+  font-family: "Anta", sans-serif;
+  font-size: 12px;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: #4fabff;
+  margin-bottom: 12px;
+}
+
+.updates__hero h1 {
+  font-family: "Anta", sans-serif;
+  font-size: clamp(34px, 6vw, 52px);
+  font-weight: 400;
+  line-height: 1.1;
+  margin-bottom: 14px;
+}
+
+.updates__lead {
+  max-width: 62ch;
+  font-size: clamp(16px, 2.2vw, 20px);
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.86);
+  margin-bottom: 22px;
+}
+
+.updates__hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.updates__shell {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 8px clamp(16px, 4vw, 48px) 48px;
+}
+
+.updates__timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.updates__item {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 16px;
+  align-items: stretch;
+}
+
+.updates__rail {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 28px;
+}
+
+.updates__dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #49aefe, #b849ff);
+  box-shadow: 0 0 16px rgba(73, 174, 254, 0.55);
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.updates__line {
+  flex: 1;
+  width: 2px;
+  margin-top: 8px;
+  min-height: 24px;
+  background: linear-gradient(
+    180deg,
+    rgba(73, 174, 254, 0.55),
+    rgba(184, 73, 255, 0.25),
+    rgba(184, 73, 255, 0.08)
+  );
+}
+
+.updates__card {
+  margin-bottom: 18px;
+  padding: clamp(20px, 3vw, 28px);
+  border-radius: 24px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(76, 174, 255, 0.22);
+  box-shadow: 0 0 48px rgba(106, 0, 174, 0.08);
+}
+
+.updates__card-head h2 {
+  font-family: "Anta", sans-serif;
+  font-size: clamp(22px, 3.4vw, 28px);
+  font-weight: 400;
+  line-height: 1.2;
+  margin: 10px 0 8px;
+}
+
+.updates__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.updates__version {
+  font-family: "Anta", sans-serif;
+  letter-spacing: 0.4px;
+  color: #9ed0ff;
+}
+
+.updates__tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.updates__tag--nauja {
+  color: #dff5ff;
+  background: rgba(73, 174, 254, 0.22);
+  border: 1px solid rgba(73, 174, 254, 0.45);
+}
+
+.updates__tag--patobulinimas {
+  color: #f3e7ff;
+  background: rgba(184, 73, 255, 0.2);
+  border: 1px solid rgba(184, 73, 255, 0.45);
+}
+
+.updates__tag--pataisymas {
+  color: #e8ffe8;
+  background: rgba(64, 196, 120, 0.16);
+  border: 1px solid rgba(64, 196, 120, 0.4);
+}
+
+.updates__summary {
+  color: rgba(255, 255, 255, 0.82);
+  line-height: 1.55;
+  font-size: 15px;
+}
+
+.updates__changes {
+  margin-top: 16px;
+  display: grid;
+  gap: 8px;
+}
+
+.updates__changes li {
+  position: relative;
+  padding-left: 16px;
+  color: rgba(255, 255, 255, 0.88);
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+.updates__changes li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #49aefe, #b849ff);
+}
+
+@media (min-width: 800px) {
+  .updates__item {
+    gap: 22px;
+  }
+
+  .updates__card {
+    margin-bottom: 22px;
+  }
+}

@@ -7,13 +7,13 @@ export type NavItem = {
 /** Primary site navigation */
 export const SITE_NAV: NavItem[] = [
   { label: "PAGRINDINIS", to: "/", end: true },
-  { label: "FUNKCIJOS", to: "/#funkcijos" },
+  { label: "ATNAUJINIMAI", to: "/atnaujinimai" },
   { label: "DOKUMENTACIJA", to: "/dokumentacija" },
   { label: "PAGALBA", to: "/pagalba" },
 ];
 
 export const FOOTER_NAV = [
-  { label: "Funkcijos", to: "/#funkcijos" },
+  { label: "Atnaujinimai", to: "/atnaujinimai" },
   { label: "Komandos", to: "/dokumentacija#komandos" },
   { label: "Dokumentacija", to: "/dokumentacija" },
   { label: "Pagalba", to: "/pagalba" },
