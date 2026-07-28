@@ -36,6 +36,7 @@ export default function SiteHeader() {
   const closeMenu = () => setMenuOpen(false);
 
   return (
+    <>
     <header className="site-header">
       <div className="site-header__inner">
         <Link
@@ -86,9 +87,6 @@ export default function SiteHeader() {
           <a href="#login" className="site-btn site-btn--outline">
             Prisijungti su DISCORD
           </a>
-          <a href="#invite" className="site-btn site-btn--gradient">
-            Įkelti į DISCORD
-          </a>
         </div>
 
         <button
@@ -134,15 +132,10 @@ export default function SiteHeader() {
           >
             Prisijungti su DISCORD
           </a>
-          <a
-            href="#invite"
-            className="site-btn site-btn--gradient"
-            onClick={closeMenu}
-          >
-            Įkelti į DISCORD
-          </a>
         </div>
       </div>
     </header>
+    <div className="site-header__spacer" aria-hidden="true" />
+    </>
   );
 }

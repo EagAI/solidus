@@ -607,6 +607,19 @@
   z-index: 1;
 }
 
+@media (min-width: 900px) {
+  .cta__action .btn--cta {
+    /* Raise so the eclipse arc crosses the button center */
+    transform: translateY(-14px);
+  }
+}
+
+@media (min-width: 1200px) {
+  .cta__action .btn--cta {
+    transform: translateY(-18px);
+  }
+}
+
 .cta__stats {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
