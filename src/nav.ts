@@ -20,7 +20,7 @@ export const FOOTER_NAV = [
 ] as const;
 
 export const FOOTER_LEGAL = [
-  { label: "Sąlygos", to: "/pagalba#salygos" },
+  { label: "Sąlygos", to: "/salygos" },
   { label: "Privatumo politika", to: "/pagalba#privatumas" },
   { label: "Slapukų politika", to: "/pagalba#slapukai" },
   { label: "Tvarkyti slapukus", to: "/pagalba#slapukai" },

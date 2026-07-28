@@ -193,8 +193,11 @@ export default function HelpPage() {
           <h2>Sąlygos</h2>
           <p className="help__text">
             Naudodami Solidus sutinkate laikytis Discord taisyklių ir nenaudoti
-            boto kenksmingai veiklai. Pilną sąlygų tekstą galime pateikti pagal
-            užklausą.
+            boto kenksmingai veiklai. Pilną Solidus naudojimo sąlygų tekstą
+            rasite atskirame puslapyje.
+          </p>
+          <p className="help__text" style={{ marginTop: 12 }}>
+            <Link to="/salygos">Atidaryti Solidus naudojimo sąlygas →</Link>
           </p>
         </section>
 
