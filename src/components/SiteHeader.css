@@ -72,11 +72,16 @@
   color: #fff;
   white-space: nowrap;
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
-  transition: opacity 0.15s ease;
+  transition:
+    background 0.25s ease,
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.2s ease;
 }
 
 .site-btn:hover {
-  opacity: 0.92;
+  transform: translateY(-1px);
 }
 
 .site-btn--outline {
@@ -84,9 +89,20 @@
   border: 2px solid #6b4ee6;
 }
 
+.site-btn--outline:hover {
+  background: rgba(107, 78, 230, 0.28);
+  border-color: #8b74f0;
+  box-shadow: 0 4px 18px rgba(107, 78, 230, 0.35);
+}
+
 .site-btn--gradient {
   background: linear-gradient(90deg, #49aefe 0%, #b849ff 91.827%);
   border: none;
+}
+
+.site-btn--gradient:hover {
+  background: linear-gradient(90deg, #b849ff 0%, #49aefe 100%);
+  box-shadow: 0 4px 20px rgba(73, 174, 254, 0.35);
 }
 
 .site-header__burger {

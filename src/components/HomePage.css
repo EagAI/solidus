@@ -28,11 +28,16 @@
   white-space: nowrap;
   border-radius: 22px;
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
-  transition: opacity 0.15s ease;
+  transition:
+    background 0.25s ease,
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.2s ease;
 }
 
 .btn:hover {
-  opacity: 0.92;
+  transform: translateY(-1px);
 }
 
 .btn--outline-purple {
@@ -40,22 +45,48 @@
   border: 2px solid #6b4ee6;
 }
 
+.btn--outline-purple:hover {
+  background: rgba(107, 78, 230, 0.28);
+  border-color: #8b74f0;
+  box-shadow: 0 4px 18px rgba(107, 78, 230, 0.35);
+}
+
 .btn--gradient {
   background: linear-gradient(90deg, #49aefe 0%, #b849ff 91.827%);
   border: none;
+}
+
+.btn--gradient:hover {
+  background: linear-gradient(90deg, #b849ff 0%, #49aefe 100%);
+  box-shadow: 0 4px 20px rgba(73, 174, 254, 0.35);
 }
 
 .btn--header-invite {
   background: linear-gradient(90deg, #49aefe 0%, #b849ff 91.827%);
 }
 
+.btn--header-invite:hover {
+  background: linear-gradient(90deg, #b849ff 0%, #49aefe 100%);
+}
+
 .btn--hero-invite {
   background: linear-gradient(90deg, #47b2ff 0%, #b849ff 86.538%);
+}
+
+.btn--hero-invite:hover {
+  background: linear-gradient(90deg, #b849ff 0%, #47b2ff 100%);
+  box-shadow: 0 4px 20px rgba(71, 178, 255, 0.35);
 }
 
 .btn--outline-magenta {
   background: #000;
   border: 2px solid #b849ff;
+}
+
+.btn--outline-magenta:hover {
+  background: rgba(184, 73, 255, 0.28);
+  border-color: #d07aff;
+  box-shadow: 0 4px 18px rgba(184, 73, 255, 0.35);
 }
 
 .btn--cta {
@@ -65,6 +96,11 @@
   font-size: 16px;
   background: linear-gradient(90deg, #4dadff 0%, #b849ff 100%);
   box-shadow: none;
+}
+
+.btn--cta:hover {
+  background: linear-gradient(90deg, #b849ff 0%, #4dadff 100%);
+  box-shadow: 0 6px 24px rgba(184, 73, 255, 0.35);
 }
 
 .btn__icon {
