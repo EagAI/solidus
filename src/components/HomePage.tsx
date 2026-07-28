@@ -136,102 +136,119 @@ const STATS = [
 const SVG_W = 1198;
 const SVG_H = 433;
 
+/** Figma reference bodyTop — used to scale vertical tab geometry. */
+const FIGMA_BT = 77.1051;
+const FIGMA_TT = 1;
+
 const PANEL = {
   left: 1,
   right: 1194,
   bottom: 432,
   bodyTop: 56,
   tabTop: 1,
-  bodyR: 28,
-  tabR: 14,
-  shoulder: 9,
+  bodyR: 30.91,
 } as const;
 
+/** Map a Figma Y (at bodyTop 77.1) onto the current shorter notch height. */
+function mapY(figmaY: number) {
+  const { bodyTop: BT, tabTop: TT } = PANEL;
+  return TT + ((figmaY - FIGMA_TT) / (FIGMA_BT - FIGMA_TT)) * (BT - TT);
+}
+
+/** Exact Figma first-tab silhouette (shared left wall + concave right join). */
 function buildFlushLeftPath(tabRight: number): string {
-  const { bodyTop: BT, tabTop: TT, bodyR: BR, tabR, shoulder, right: R, bottom: B } =
+  const { bodyTop: BT, tabTop: TT, right: R, bottom: B, left: L, bodyR: BR } =
     PANEL;
   const tr = tabRight;
-  const rightShoulder = tr + shoulder;
 
   return [
     `M ${R - BR} ${BT}`,
-    `H ${rightShoulder}`,
-    `C ${tr + shoulder * 0.35} ${BT} ${tr} ${BT - 10} ${tr} ${TT + tabR + 6}`,
-    `V ${TT + tabR}`,
-    `C ${tr} ${TT + tabR * 0.4} ${tr - tabR * 0.55} ${TT} ${tr - tabR} ${TT}`,
-    `H ${PANEL.left + BR}`,
-    `C ${PANEL.left + BR * 0.4} ${TT} ${PANEL.left} ${TT + BR * 0.4} ${PANEL.left} ${TT + BR}`,
+    `H ${tr + 35.938}`,
+    `H ${tr + 29.358}`,
+    `C ${tr + 12.285} ${BT} ${tr} ${mapY(65.1255)} ${tr} ${mapY(48.0165)}`,
+    `V ${mapY(27.7141)}`,
+    `C ${tr - 0.339} ${mapY(12.0282)} ${tr - 14.985} ${TT} ${tr - 30.614} ${TT}`,
+    `H ${L + BR}`,
+    `C ${L + BR * 0.48} ${TT} ${L} ${TT + BR * 0.48} ${L} ${TT + BR}`,
     `V ${B - BR}`,
-    `C ${PANEL.left} ${B - BR * 0.4} ${PANEL.left + BR * 0.4} ${B} ${PANEL.left + BR} ${B}`,
+    `C ${L} ${B - BR * 0.55} ${L + BR * 0.55} ${B} ${L + BR} ${B}`,
     `H ${R - BR}`,
-    `C ${R - BR * 0.4} ${B} ${R} ${B - BR * 0.4} ${R} ${B - BR}`,
+    `C ${R - BR * 0.55} ${B} ${R} ${B - BR * 0.55} ${R} ${B - BR}`,
     `V ${BT + BR}`,
-    `C ${R} ${BT + BR * 0.4} ${R - BR * 0.4} ${BT} ${R - BR} ${BT}`,
+    `C ${R} ${BT + BR * 0.55} ${R - BR * 0.55} ${BT} ${R - BR} ${BT}`,
     `Z`,
   ].join(" ");
 }
 
+/** Exact Figma last-tab silhouette (concave left join + shared right wall). */
 function buildFlushRightPath(tabLeft: number): string {
-  const { bodyTop: BT, tabTop: TT, bodyR: BR, tabR, shoulder, right: R, bottom: B, left: L } =
+  const { bodyTop: BT, tabTop: TT, right: R, bottom: B, left: L, bodyR: BR } =
     PANEL;
   const tl = tabLeft;
-  const leftShoulder = tl - shoulder;
 
   return [
     `M ${L + BR} ${BT}`,
-    `H ${leftShoulder}`,
-    `C ${tl - shoulder * 0.35} ${BT} ${tl} ${BT - 10} ${tl} ${TT + tabR + 6}`,
-    `V ${TT + tabR}`,
-    `C ${tl} ${TT + tabR * 0.4} ${tl + tabR * 0.55} ${TT} ${tl + tabR} ${TT}`,
+    `H ${tl - 35.938}`,
+    `H ${tl - 29.358}`,
+    `C ${tl - 12.285} ${BT} ${tl} ${mapY(65.1255)} ${tl} ${mapY(48.0165)}`,
+    `V ${mapY(27.7141)}`,
+    `C ${tl + 0.339} ${mapY(12.0282)} ${tl + 14.985} ${TT} ${tl + 30.614} ${TT}`,
     `H ${R - BR}`,
-    `C ${R - BR * 0.4} ${TT} ${R} ${TT + BR * 0.4} ${R} ${TT + BR}`,
+    `C ${R - BR * 0.48} ${TT} ${R} ${TT + BR * 0.48} ${R} ${TT + BR}`,
     `V ${B - BR}`,
-    `C ${R} ${B - BR * 0.4} ${R - BR * 0.4} ${B} ${R - BR} ${B}`,
+    `C ${R} ${B - BR * 0.55} ${R - BR * 0.55} ${B} ${R - BR} ${B}`,
     `H ${L + BR}`,
-    `C ${L + BR * 0.4} ${B} ${L} ${B - BR * 0.4} ${L} ${B - BR}`,
+    `C ${L + BR * 0.55} ${B} ${L} ${B - BR * 0.55} ${L} ${B - BR}`,
     `V ${BT + BR}`,
-    `C ${L} ${BT + BR * 0.4} ${L + BR * 0.4} ${BT} ${L + BR} ${BT}`,
+    `C ${L} ${BT + BR * 0.55} ${L + BR * 0.55} ${BT} ${L + BR} ${BT}`,
     `Z`,
   ].join(" ");
 }
 
+/** Middle-tab notch with Figma concave shoulders on both sides. */
 function buildMiddlePath(tabLeft: number, tabWidth: number): string {
-  const { left: L, right: R, bottom: B, bodyTop: BT, tabTop: TT, bodyR: BR, tabR, shoulder } =
+  const { left: L, right: R, bottom: B, bodyTop: BT, tabTop: TT, bodyR: BR } =
     PANEL;
-  const tl = Math.max(L + BR + 4, tabLeft);
-  const tr = Math.min(R - BR - 4, tabLeft + tabWidth);
+  const shoulder = 29.5;
+  const tl = Math.max(L + BR + 8, tabLeft);
+  const tr = Math.min(R - BR - 8, tabLeft + tabWidth);
   const leftShoulder = Math.max(L + BR, tl - shoulder);
   const rightShoulder = Math.min(R - BR, tr + shoulder);
 
   return [
     `M ${L + BR} ${BT}`,
     `H ${leftShoulder}`,
-    `C ${tl - shoulder * 0.35} ${BT} ${tl} ${BT - 10} ${tl} ${TT + tabR + 6}`,
-    `V ${TT + tabR}`,
-    `C ${tl} ${TT + tabR * 0.4} ${tl + tabR * 0.55} ${TT} ${tl + tabR} ${TT}`,
-    `H ${tr - tabR}`,
-    `C ${tr - tabR * 0.55} ${TT} ${tr} ${TT + tabR * 0.4} ${tr} ${TT + tabR}`,
-    `V ${TT + tabR + 6}`,
-    `C ${tr} ${BT - 10} ${tr + shoulder * 0.35} ${BT} ${rightShoulder} ${BT}`,
+    `C ${tl - 12.285} ${BT} ${tl} ${mapY(65.1255)} ${tl} ${mapY(48.0165)}`,
+    `V ${mapY(27.7141)}`,
+    `C ${tl} ${mapY(12.0282)} ${tl + 14.985} ${TT} ${tl + 30.614} ${TT}`,
+    `H ${tr - 30.614}`,
+    `C ${tr - 14.985} ${TT} ${tr} ${mapY(12.0282)} ${tr} ${mapY(27.7141)}`,
+    `V ${mapY(48.0165)}`,
+    `C ${tr} ${mapY(65.1255)} ${tr + 12.285} ${BT} ${rightShoulder} ${BT}`,
     `H ${R - BR}`,
-    `C ${R - BR * 0.4} ${BT} ${R} ${BT + BR * 0.4} ${R} ${BT + BR}`,
+    `C ${R - BR * 0.45} ${BT} ${R} ${BT + BR * 0.45} ${R} ${BT + BR}`,
     `V ${B - BR}`,
-    `C ${R} ${B - BR * 0.4} ${R - BR * 0.4} ${B} ${R - BR} ${B}`,
+    `C ${R} ${B - BR * 0.45} ${R - BR * 0.45} ${B} ${R - BR} ${B}`,
     `H ${L + BR}`,
-    `C ${L + BR * 0.4} ${B} ${L} ${B - BR * 0.4} ${L} ${B - BR}`,
+    `C ${L + BR * 0.45} ${B} ${L} ${B - BR * 0.45} ${L} ${B - BR}`,
     `V ${BT + BR}`,
-    `C ${L} ${BT + BR * 0.4} ${L + BR * 0.4} ${BT} ${L + BR} ${BT}`,
+    `C ${L} ${BT + BR * 0.45} ${L + BR * 0.45} ${BT} ${L + BR} ${BT}`,
     `Z`,
   ].join(" ");
 }
 
-function buildPanelPath(tabLeft: number, tabWidth: number): string {
-  const tabRight = tabLeft + tabWidth;
-  if (tabLeft <= 8) {
-    return buildFlushLeftPath(Math.max(120, tabRight));
+type FlushMode = "left" | "right" | "middle";
+
+function buildPanelPath(
+  tabLeft: number,
+  tabWidth: number,
+  flush: FlushMode,
+): string {
+  if (flush === "left") {
+    return buildFlushLeftPath(Math.max(140, tabLeft + tabWidth));
   }
-  if (tabRight >= PANEL.right - 8) {
-    return buildFlushRightPath(Math.min(PANEL.right - 120, tabLeft));
+  if (flush === "right") {
+    return buildFlushRightPath(Math.min(PANEL.right - 140, tabLeft));
   }
   return buildMiddlePath(tabLeft, tabWidth);
 }
@@ -259,13 +276,15 @@ function renderParagraph(text: string, highlight?: string) {
 function FeaturePanelBorder({
   tabLeft,
   tabWidth,
+  flush,
 }: {
   tabLeft: number;
   tabWidth: number;
+  flush: FlushMode;
 }) {
   const path = useMemo(
-    () => buildPanelPath(tabLeft, tabWidth),
-    [tabLeft, tabWidth],
+    () => buildPanelPath(tabLeft, tabWidth, flush),
+    [tabLeft, tabWidth, flush],
   );
 
   return (
@@ -304,6 +323,13 @@ function FeaturePanelBorder({
 export default function HomePage() {
   const [activeId, setActiveId] = useState<TabId>("moderavimas");
   const activeTab = FEATURE_TABS.find((t) => t.id === activeId) ?? FEATURE_TABS[0];
+  const activeIndex = FEATURE_TABS.findIndex((t) => t.id === activeId);
+  const flushMode: FlushMode =
+    activeIndex <= 0
+      ? "left"
+      : activeIndex >= FEATURE_TABS.length - 1
+        ? "right"
+        : "middle";
   const shellRef = useRef<HTMLDivElement>(null);
   const tabsRef = useRef<HTMLDivElement>(null);
   const [target, setTarget] = useState({ left: 12, width: 180 });
@@ -447,7 +473,11 @@ export default function HomePage() {
 
         <div className="features__shell" ref={shellRef}>
           <div className="features__panel" aria-hidden="true">
-            <FeaturePanelBorder tabLeft={anim.left} tabWidth={anim.width} />
+            <FeaturePanelBorder
+              tabLeft={anim.left}
+              tabWidth={anim.width}
+              flush={flushMode}
+            />
           </div>
 
           <div
