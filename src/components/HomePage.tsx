@@ -136,40 +136,41 @@ const STATS = [
 const SVG_W = 1198;
 const SVG_H = 433;
 
-/** Figma reference bodyTop — used to scale vertical tab geometry. */
-const FIGMA_BT = 77.1051;
-const FIGMA_TT = 1;
-
 const PANEL = {
   left: 1,
   right: 1194,
   bottom: 432,
-  bodyTop: 56,
+  bodyTop: 66,
   tabTop: 1,
   bodyR: 30.91,
+  /** Match CSS .features__tab border-radius (~18px at desktop width). */
+  tabR: 18,
+  shoulder: 22,
 } as const;
-
-/** Map a Figma Y (at bodyTop 77.1) onto the current shorter notch height. */
-function mapY(figmaY: number) {
-  const { bodyTop: BT, tabTop: TT } = PANEL;
-  return TT + ((figmaY - FIGMA_TT) / (FIGMA_BT - FIGMA_TT)) * (BT - TT);
-}
 
 /** Exact Figma first-tab silhouette (shared left wall + concave right join). */
 function buildFlushLeftPath(tabRight: number): string {
-  const { bodyTop: BT, tabTop: TT, right: R, bottom: B, left: L, bodyR: BR } =
-    PANEL;
+  const {
+    bodyTop: BT,
+    tabTop: TT,
+    right: R,
+    bottom: B,
+    left: L,
+    bodyR: BR,
+    tabR,
+    shoulder,
+  } = PANEL;
   const tr = tabRight;
+  const joinY = TT + tabR + (BT - TT - tabR) * 0.35;
 
   return [
     `M ${R - BR} ${BT}`,
-    `H ${tr + 35.938}`,
-    `H ${tr + 29.358}`,
-    `C ${tr + 12.285} ${BT} ${tr} ${mapY(65.1255)} ${tr} ${mapY(48.0165)}`,
-    `V ${mapY(27.7141)}`,
-    `C ${tr - 0.339} ${mapY(12.0282)} ${tr - 14.985} ${TT} ${tr - 30.614} ${TT}`,
+    `H ${tr + shoulder}`,
+    `C ${tr + 12} ${BT} ${tr} ${BT - 12} ${tr} ${joinY}`,
+    `V ${TT + tabR}`,
+    `C ${tr} ${TT + tabR * 0.45} ${tr - tabR * 0.55} ${TT} ${tr - tabR} ${TT}`,
     `H ${L + BR}`,
-    `C ${L + BR * 0.48} ${TT} ${L} ${TT + BR * 0.48} ${L} ${TT + BR}`,
+    `C ${L + BR * 0.45} ${TT} ${L} ${TT + BR * 0.45} ${L} ${TT + BR}`,
     `V ${B - BR}`,
     `C ${L} ${B - BR * 0.55} ${L + BR * 0.55} ${B} ${L + BR} ${B}`,
     `H ${R - BR}`,
@@ -182,19 +183,27 @@ function buildFlushLeftPath(tabRight: number): string {
 
 /** Exact Figma last-tab silhouette (concave left join + shared right wall). */
 function buildFlushRightPath(tabLeft: number): string {
-  const { bodyTop: BT, tabTop: TT, right: R, bottom: B, left: L, bodyR: BR } =
-    PANEL;
+  const {
+    bodyTop: BT,
+    tabTop: TT,
+    right: R,
+    bottom: B,
+    left: L,
+    bodyR: BR,
+    tabR,
+    shoulder,
+  } = PANEL;
   const tl = tabLeft;
+  const joinY = TT + tabR + (BT - TT - tabR) * 0.35;
 
   return [
     `M ${L + BR} ${BT}`,
-    `H ${tl - 35.938}`,
-    `H ${tl - 29.358}`,
-    `C ${tl - 12.285} ${BT} ${tl} ${mapY(65.1255)} ${tl} ${mapY(48.0165)}`,
-    `V ${mapY(27.7141)}`,
-    `C ${tl + 0.339} ${mapY(12.0282)} ${tl + 14.985} ${TT} ${tl + 30.614} ${TT}`,
+    `H ${tl - shoulder}`,
+    `C ${tl - 12} ${BT} ${tl} ${BT - 12} ${tl} ${joinY}`,
+    `V ${TT + tabR}`,
+    `C ${tl} ${TT + tabR * 0.45} ${tl + tabR * 0.55} ${TT} ${tl + tabR} ${TT}`,
     `H ${R - BR}`,
-    `C ${R - BR * 0.48} ${TT} ${R} ${TT + BR * 0.48} ${R} ${TT + BR}`,
+    `C ${R - BR * 0.45} ${TT} ${R} ${TT + BR * 0.45} ${R} ${TT + BR}`,
     `V ${B - BR}`,
     `C ${R} ${B - BR * 0.55} ${R - BR * 0.55} ${B} ${R - BR} ${B}`,
     `H ${L + BR}`,
@@ -205,26 +214,34 @@ function buildFlushRightPath(tabLeft: number): string {
   ].join(" ");
 }
 
-/** Middle-tab notch with Figma concave shoulders on both sides. */
+/** Middle-tab notch with matching top radii + concave shoulders. */
 function buildMiddlePath(tabLeft: number, tabWidth: number): string {
-  const { left: L, right: R, bottom: B, bodyTop: BT, tabTop: TT, bodyR: BR } =
-    PANEL;
-  const shoulder = 29.5;
+  const {
+    left: L,
+    right: R,
+    bottom: B,
+    bodyTop: BT,
+    tabTop: TT,
+    bodyR: BR,
+    tabR,
+    shoulder,
+  } = PANEL;
   const tl = Math.max(L + BR + 8, tabLeft);
   const tr = Math.min(R - BR - 8, tabLeft + tabWidth);
   const leftShoulder = Math.max(L + BR, tl - shoulder);
   const rightShoulder = Math.min(R - BR, tr + shoulder);
+  const joinY = TT + tabR + (BT - TT - tabR) * 0.35;
 
   return [
     `M ${L + BR} ${BT}`,
     `H ${leftShoulder}`,
-    `C ${tl - 12.285} ${BT} ${tl} ${mapY(65.1255)} ${tl} ${mapY(48.0165)}`,
-    `V ${mapY(27.7141)}`,
-    `C ${tl} ${mapY(12.0282)} ${tl + 14.985} ${TT} ${tl + 30.614} ${TT}`,
-    `H ${tr - 30.614}`,
-    `C ${tr - 14.985} ${TT} ${tr} ${mapY(12.0282)} ${tr} ${mapY(27.7141)}`,
-    `V ${mapY(48.0165)}`,
-    `C ${tr} ${mapY(65.1255)} ${tr + 12.285} ${BT} ${rightShoulder} ${BT}`,
+    `C ${tl - 12} ${BT} ${tl} ${BT - 12} ${tl} ${joinY}`,
+    `V ${TT + tabR}`,
+    `C ${tl} ${TT + tabR * 0.45} ${tl + tabR * 0.55} ${TT} ${tl + tabR} ${TT}`,
+    `H ${tr - tabR}`,
+    `C ${tr - tabR * 0.55} ${TT} ${tr} ${TT + tabR * 0.45} ${tr} ${TT + tabR}`,
+    `V ${joinY}`,
+    `C ${tr} ${BT - 12} ${tr + 12} ${BT} ${rightShoulder} ${BT}`,
     `H ${R - BR}`,
     `C ${R - BR * 0.45} ${BT} ${R} ${BT + BR * 0.45} ${R} ${BT + BR}`,
     `V ${B - BR}`,
