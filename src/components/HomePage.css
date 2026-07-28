@@ -328,7 +328,7 @@
   padding-left: 4px;
   padding-right: 4px;
   scrollbar-width: thin;
-  scrollbar-color: rgba(76, 174, 255, 0.4) transparent;
+  scrollbar-color: #6a7cff transparent;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -572,37 +572,29 @@
   opacity: 0.95;
   pointer-events: none;
   z-index: 0;
-  overflow: hidden;
 }
 
 .cta__aura img {
-  width: 135%;
-  max-width: none;
+  width: 100%;
   height: auto;
   display: block;
-  margin-left: -17.5%;
-  will-change: transform, filter;
-  animation: cta-aura-flow 10s ease-in-out infinite alternate;
+  will-change: filter;
+  animation: cta-aura-glow 8s ease-in-out infinite alternate;
 }
 
-@keyframes cta-aura-flow {
+@keyframes cta-aura-glow {
   0% {
-    transform: translateX(-8%);
-    filter: hue-rotate(-22deg) saturate(1.08);
+    filter: hue-rotate(-28deg) saturate(1.05);
   }
   100% {
-    transform: translateX(8%);
-    filter: hue-rotate(32deg) saturate(1.14);
+    filter: hue-rotate(36deg) saturate(1.18);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .cta__aura img {
     animation: none;
-    transform: none;
     filter: none;
-    width: 100%;
-    margin-left: 0;
   }
 }
 

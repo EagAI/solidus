@@ -440,6 +440,7 @@
     padding-bottom: 4px;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
+    scrollbar-color: #6a7cff transparent;
   }
 
   .docs__toc-indicator {
