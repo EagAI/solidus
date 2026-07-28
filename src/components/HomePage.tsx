@@ -35,8 +35,6 @@ type FeatureTab = {
   icon: string;
   iconW: number;
   iconH: number;
-  x: number;
-  width: number;
   title: string;
   paragraphs: [string, string];
   highlight?: string;
@@ -48,10 +46,8 @@ const FEATURE_TABS: FeatureTab[] = [
     label: "MODERAVIMAS",
     shortLabel: "Mod",
     icon: moderavimasIcon,
-    iconW: 29,
-    iconH: 29,
-    x: 1,
-    width: 197.5,
+    iconW: 26,
+    iconH: 26,
     title: "Lorem ipsum dolor",
     paragraphs: [
       "Sed egestas vulputate sem, malesuada luctus ex egestas vitae. Aliquam pulvinar lacus vitae purus dapibus, ut dictum nunc pharetra. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed sit amet efficitur nibh, vitae aliquam sapien. Nullam eu venenatis nibh. Praesent mattis eget sapien tincidunt accumsan.",
@@ -64,10 +60,8 @@ const FEATURE_TABS: FeatureTab[] = [
     label: "ĮRANKIAI",
     shortLabel: "Įrankiai",
     icon: irankiaiIcon,
-    iconW: 32,
-    iconH: 32,
-    x: 209,
-    width: 190,
+    iconW: 26,
+    iconH: 26,
     title: "Įrankiai serveriui",
     paragraphs: [
       "Greiti ir patogūs įrankiai, kurie padeda valdyti roles, kanalus ir narius be triukšmo. Sukurkite šablonus, paleiskite veiksmus vienu mygtuku ir sutaupykite laiką kasdieniam darbui.",
@@ -80,10 +74,8 @@ const FEATURE_TABS: FeatureTab[] = [
     label: "EKONOMIKA",
     shortLabel: "Eko",
     icon: ekonomikaIcon,
-    iconW: 34,
-    iconH: 34,
-    x: 409,
-    width: 190,
+    iconW: 26,
+    iconH: 26,
     title: "Ekonomikos sistema",
     paragraphs: [
       "Sukurkite serverio ekonomiką su balansu, prekėmis ir apdovanojimais. Skatinkite aktyvumą, prekybą tarp narių ir ilgalaikį įsitraukimą be rankinio darbo.",
@@ -96,10 +88,8 @@ const FEATURE_TABS: FeatureTab[] = [
     label: "AUTOMATIKA",
     shortLabel: "Auto",
     icon: automatikaIcon,
-    iconW: 31,
-    iconH: 31,
-    x: 609,
-    width: 189,
+    iconW: 26,
+    iconH: 26,
     title: "Automatikos srautai",
     paragraphs: [
       "Automatizuokite pasveikinimus, roles, priminimus ir reakcijas. Paleiskite srautus pagal įvykius ir palikite rutiną botui, o sau — svarbiausius sprendimus.",
@@ -112,10 +102,8 @@ const FEATURE_TABS: FeatureTab[] = [
     label: "APSAUGA",
     shortLabel: "Apsauga",
     icon: saugumasIcon,
-    iconW: 29,
-    iconH: 29,
-    x: 806,
-    width: 190,
+    iconW: 26,
+    iconH: 26,
     title: "Apsaugos sluoksnis",
     paragraphs: [
       "Apsaugokite bendruomenę nuo spamo, raidų ir kenksmingų nuorodų. Filtrai, limitai ir greiti veiksmai padeda išlaikyti tvarką dar prieš problemoms išaugant.",
@@ -128,10 +116,8 @@ const FEATURE_TABS: FeatureTab[] = [
     label: "TINKINIMAS",
     shortLabel: "Tinkinimas",
     icon: tinkinimasIcon,
-    iconW: 27,
-    iconH: 27,
-    x: 996.5,
-    width: 197.5,
+    iconW: 26,
+    iconH: 26,
     title: "Pilnas tinkinimas",
     paragraphs: [
       "Derinkite komandas, žinutes ir elgesį pagal savo stilių. Nustatykite kalbą, teises ir išvaizdą taip, kad Solidus jaustųsi natūralia jūsų serverio dalimi.",
@@ -147,99 +133,105 @@ const STATS = [
   { value: "99,9%", label: "VEIKIMO LAIKAS" },
 ] as const;
 
+const SVG_W = 1198;
+const SVG_H = 433;
+
 const PANEL = {
   left: 1,
   right: 1194,
   bottom: 432,
-  bodyTop: 77.1051,
+  bodyTop: 56,
   tabTop: 1,
-  bodyR: 30.91,
-  tabR: 20,
+  bodyR: 28,
+  tabR: 14,
+  shoulder: 9,
 } as const;
 
 function buildFlushLeftPath(tabRight: number): string {
+  const { bodyTop: BT, tabTop: TT, bodyR: BR, tabR, shoulder, right: R, bottom: B } =
+    PANEL;
   const tr = tabRight;
+  const rightShoulder = tr + shoulder;
+
   return [
-    `M 1163.09 77.1051`,
-    `H ${tr + 35.938}`,
-    `H ${tr + 29.358}`,
-    `C ${tr + 12.285} 77.1051 ${tr} 65.1255 ${tr} 48.0165`,
-    `V 27.7141`,
-    `C ${tr - 0.339} 12.0282 ${tr - 14.985} 1 ${tr - 30.614} 1`,
-    `H 31.9107`,
-    `C 14.8371 0.991731 1 14.8576 1 31.9665`,
-    `V 401.025`,
-    `C 1 418.134 14.8371 432 31.9107 432`,
-    `H 1163.09`,
-    `C 1180.16 432 1194 418.134 1194 401.025`,
-    `V 108.08`,
-    `C 1194 90.9709 1180.16 77.1051 1163.09 77.1051`,
+    `M ${R - BR} ${BT}`,
+    `H ${rightShoulder}`,
+    `C ${tr + shoulder * 0.35} ${BT} ${tr} ${BT - 10} ${tr} ${TT + tabR + 6}`,
+    `V ${TT + tabR}`,
+    `C ${tr} ${TT + tabR * 0.4} ${tr - tabR * 0.55} ${TT} ${tr - tabR} ${TT}`,
+    `H ${PANEL.left + BR}`,
+    `C ${PANEL.left + BR * 0.4} ${TT} ${PANEL.left} ${TT + BR * 0.4} ${PANEL.left} ${TT + BR}`,
+    `V ${B - BR}`,
+    `C ${PANEL.left} ${B - BR * 0.4} ${PANEL.left + BR * 0.4} ${B} ${PANEL.left + BR} ${B}`,
+    `H ${R - BR}`,
+    `C ${R - BR * 0.4} ${B} ${R} ${B - BR * 0.4} ${R} ${B - BR}`,
+    `V ${BT + BR}`,
+    `C ${R} ${BT + BR * 0.4} ${R - BR * 0.4} ${BT} ${R - BR} ${BT}`,
     `Z`,
   ].join(" ");
 }
 
 function buildFlushRightPath(tabLeft: number): string {
+  const { bodyTop: BT, tabTop: TT, bodyR: BR, tabR, shoulder, right: R, bottom: B, left: L } =
+    PANEL;
   const tl = tabLeft;
-  const R = PANEL.right;
+  const leftShoulder = tl - shoulder;
+
   return [
-    `M 31.91 77.1051`,
-    `H ${tl - 35.938}`,
-    `H ${tl - 29.358}`,
-    `C ${tl - 12.285} 77.1051 ${tl} 65.1255 ${tl} 48.0165`,
-    `V 27.7141`,
-    `C ${tl + 0.339} 12.0282 ${tl + 14.985} 1 ${tl + 30.614} 1`,
-    `H ${R - 31.9107}`,
-    `C ${R - 14.8371} 0.991731 ${R} 14.8576 ${R} 31.9665`,
-    `V 401.025`,
-    `C ${R} 418.134 ${R - 14.8371} 432 ${R - 31.9107} 432`,
-    `H 31.9107`,
-    `C 14.8371 432 1 418.134 1 401.025`,
-    `V 108.08`,
-    `C 1 90.9709 14.8371 77.1051 31.91 77.1051`,
+    `M ${L + BR} ${BT}`,
+    `H ${leftShoulder}`,
+    `C ${tl - shoulder * 0.35} ${BT} ${tl} ${BT - 10} ${tl} ${TT + tabR + 6}`,
+    `V ${TT + tabR}`,
+    `C ${tl} ${TT + tabR * 0.4} ${tl + tabR * 0.55} ${TT} ${tl + tabR} ${TT}`,
+    `H ${R - BR}`,
+    `C ${R - BR * 0.4} ${TT} ${R} ${TT + BR * 0.4} ${R} ${TT + BR}`,
+    `V ${B - BR}`,
+    `C ${R} ${B - BR * 0.4} ${R - BR * 0.4} ${B} ${R - BR} ${B}`,
+    `H ${L + BR}`,
+    `C ${L + BR * 0.4} ${B} ${L} ${B - BR * 0.4} ${L} ${B - BR}`,
+    `V ${BT + BR}`,
+    `C ${L} ${BT + BR * 0.4} ${L + BR * 0.4} ${BT} ${L + BR} ${BT}`,
     `Z`,
   ].join(" ");
 }
 
 function buildMiddlePath(tabLeft: number, tabWidth: number): string {
-  const { left: L, right: R, bottom: B, bodyTop: BT, tabTop: TT, bodyR: BR } =
+  const { left: L, right: R, bottom: B, bodyTop: BT, tabTop: TT, bodyR: BR, tabR, shoulder } =
     PANEL;
-  const shoulder = 29.5;
-  const tl = Math.max(L + BR + 8, tabLeft);
-  const tr = Math.min(R - BR - 8, tabLeft + tabWidth);
+  const tl = Math.max(L + BR + 4, tabLeft);
+  const tr = Math.min(R - BR - 4, tabLeft + tabWidth);
   const leftShoulder = Math.max(L + BR, tl - shoulder);
   const rightShoulder = Math.min(R - BR, tr + shoulder);
 
   return [
     `M ${L + BR} ${BT}`,
     `H ${leftShoulder}`,
-    `C ${tl - 12.285} ${BT} ${tl} ${BT - 11.98} ${tl} ${BT - 29.09}`,
-    `V ${TT + 26.714}`,
-    `C ${tl} ${TT + 11.028} ${tl + 14.985} ${TT} ${tl + 30.614} ${TT}`,
-    `H ${tr - 30.614}`,
-    `C ${tr - 14.985} ${TT} ${tr} ${TT + 11.028} ${tr} ${TT + 26.714}`,
-    `V ${BT - 29.09}`,
-    `C ${tr} ${BT - 11.98} ${tr + 12.285} ${BT} ${rightShoulder} ${BT}`,
+    `C ${tl - shoulder * 0.35} ${BT} ${tl} ${BT - 10} ${tl} ${TT + tabR + 6}`,
+    `V ${TT + tabR}`,
+    `C ${tl} ${TT + tabR * 0.4} ${tl + tabR * 0.55} ${TT} ${tl + tabR} ${TT}`,
+    `H ${tr - tabR}`,
+    `C ${tr - tabR * 0.55} ${TT} ${tr} ${TT + tabR * 0.4} ${tr} ${TT + tabR}`,
+    `V ${TT + tabR + 6}`,
+    `C ${tr} ${BT - 10} ${tr + shoulder * 0.35} ${BT} ${rightShoulder} ${BT}`,
     `H ${R - BR}`,
-    `C ${R - BR * 0.45} ${BT} ${R} ${BT + BR * 0.45} ${R} ${BT + BR}`,
+    `C ${R - BR * 0.4} ${BT} ${R} ${BT + BR * 0.4} ${R} ${BT + BR}`,
     `V ${B - BR}`,
-    `C ${R} ${B - BR * 0.45} ${R - BR * 0.45} ${B} ${R - BR} ${B}`,
+    `C ${R} ${B - BR * 0.4} ${R - BR * 0.4} ${B} ${R - BR} ${B}`,
     `H ${L + BR}`,
-    `C ${L + BR * 0.45} ${B} ${L} ${B - BR * 0.45} ${L} ${B - BR}`,
+    `C ${L + BR * 0.4} ${B} ${L} ${B - BR * 0.4} ${L} ${B - BR}`,
     `V ${BT + BR}`,
-    `C ${L} ${BT + BR * 0.45} ${L + BR * 0.45} ${BT} ${L + BR} ${BT}`,
+    `C ${L} ${BT + BR * 0.4} ${L + BR * 0.4} ${BT} ${L + BR} ${BT}`,
     `Z`,
   ].join(" ");
 }
 
 function buildPanelPath(tabLeft: number, tabWidth: number): string {
   const tabRight = tabLeft + tabWidth;
-  if (tabLeft <= 12) {
-    return buildFlushLeftPath(Math.max(160, Math.min(240, tabRight)));
+  if (tabLeft <= 8) {
+    return buildFlushLeftPath(Math.max(120, tabRight));
   }
-  if (tabRight >= PANEL.right - 12) {
-    return buildFlushRightPath(
-      Math.max(PANEL.right - 240, Math.min(PANEL.right - 160, tabLeft)),
-    );
+  if (tabRight >= PANEL.right - 8) {
+    return buildFlushRightPath(Math.min(PANEL.right - 120, tabLeft));
   }
   return buildMiddlePath(tabLeft, tabWidth);
 }
@@ -279,7 +271,7 @@ function FeaturePanelBorder({
   return (
     <svg
       className="features__panel-svg"
-      viewBox="0 0 1198 433"
+      viewBox={`0 0 ${SVG_W} ${SVG_H}`}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
@@ -295,10 +287,10 @@ function FeaturePanelBorder({
       <defs>
         <linearGradient
           id="features-panel-gradient"
-          x1="597.5"
+          x1={SVG_W / 2}
           y1="1"
-          x2="597.5"
-          y2="432"
+          x2={SVG_W / 2}
+          y2={SVG_H - 1}
           gradientUnits="userSpaceOnUse"
         >
           <stop stopColor="#4AAFFE" />
@@ -312,24 +304,62 @@ function FeaturePanelBorder({
 export default function HomePage() {
   const [activeId, setActiveId] = useState<TabId>("moderavimas");
   const activeTab = FEATURE_TABS.find((t) => t.id === activeId) ?? FEATURE_TABS[0];
-  const [anim, setAnim] = useState({
-    left: activeTab.x,
-    width: activeTab.width,
-  });
+  const shellRef = useRef<HTMLDivElement>(null);
+  const tabsRef = useRef<HTMLDivElement>(null);
+  const [target, setTarget] = useState({ left: 12, width: 180 });
+  const [anim, setAnim] = useState({ left: 12, width: 180 });
   const animRef = useRef(anim);
   const rafRef = useRef<number | null>(null);
   const { hash } = useLocation();
+
+  const measureActiveTab = () => {
+    const shell = shellRef.current;
+    const tabBtn = tabsRef.current?.querySelector<HTMLElement>(
+      `[data-tab="${activeId}"]`,
+    );
+    if (!shell || !tabBtn) return;
+
+    const shellRect = shell.getBoundingClientRect();
+    if (shellRect.width < 1) return;
+
+    const tabRect = tabBtn.getBoundingClientRect();
+    const scaleX = SVG_W / shellRect.width;
+    setTarget({
+      left: (tabRect.left - shellRect.left) * scaleX,
+      width: tabRect.width * scaleX,
+    });
+  };
 
   useEffect(() => {
     animRef.current = anim;
   }, [anim]);
 
   useEffect(() => {
-    const from = animRef.current;
-    const to = { left: activeTab.x, width: activeTab.width };
-    if (from.left === to.left && from.width === to.width) return;
+    measureActiveTab();
+    const shell = shellRef.current;
+    if (!shell || typeof ResizeObserver === "undefined") return;
 
-    const duration = 420;
+    const observer = new ResizeObserver(() => measureActiveTab());
+    observer.observe(shell);
+    window.addEventListener("resize", measureActiveTab);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", measureActiveTab);
+    };
+  }, [activeId]);
+
+  useEffect(() => {
+    const from = animRef.current;
+    const to = target;
+    if (
+      Math.abs(from.left - to.left) < 0.2 &&
+      Math.abs(from.width - to.width) < 0.2
+    ) {
+      setAnim(to);
+      return;
+    }
+
+    const duration = 380;
     const start = performance.now();
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
 
@@ -348,7 +378,7 @@ export default function HomePage() {
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [activeTab.x, activeTab.width]);
+  }, [target.left, target.width]);
 
   useEffect(() => {
     if (!hash) return;
@@ -415,12 +445,17 @@ export default function HomePage() {
       <section className="features" id="funkcijos">
         <div className="features__blur" aria-hidden="true" />
 
-        <div className="features__shell">
+        <div className="features__shell" ref={shellRef}>
           <div className="features__panel" aria-hidden="true">
             <FeaturePanelBorder tabLeft={anim.left} tabWidth={anim.width} />
           </div>
 
-          <div className="features__tabs" role="tablist" aria-label="Funkcijos">
+          <div
+            className="features__tabs"
+            ref={tabsRef}
+            role="tablist"
+            aria-label="Funkcijos"
+          >
             {FEATURE_TABS.map((tab) => {
               const selected = tab.id === activeId;
               return (
