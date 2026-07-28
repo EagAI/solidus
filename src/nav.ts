@@ -8,13 +8,13 @@ export type NavItem = {
 export const SITE_NAV: NavItem[] = [
   { label: "PAGRINDINIS", to: "/", end: true },
   { label: "ATNAUJINIMAI", to: "/atnaujinimai" },
-  { label: "DOKUMENTACIJA", to: "/dokumentacija" },
+  { label: "KOMANDA", to: "/komanda" },
   { label: "PAGALBA", to: "/pagalba" },
 ];
 
 export const FOOTER_NAV = [
   { label: "Atnaujinimai", to: "/atnaujinimai" },
-  { label: "Komandos", to: "/dokumentacija#komandos" },
+  { label: "Komanda", to: "/komanda" },
   { label: "Dokumentacija", to: "/dokumentacija" },
   { label: "Pagalba", to: "/pagalba" },
 ] as const;

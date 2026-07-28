@@ -29,11 +29,11 @@
   border-radius: 22px;
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
   transition:
-    background 0.25s ease,
-    background-color 0.25s ease,
-    border-color 0.25s ease,
-    box-shadow 0.25s ease,
-    transform 0.2s ease;
+    background-color 0.45s ease,
+    background-position 0.55s ease,
+    border-color 0.45s ease,
+    box-shadow 0.45s ease,
+    transform 0.25s ease;
 }
 
 .btn:hover {
@@ -51,31 +51,54 @@
   box-shadow: 0 4px 18px rgba(107, 78, 230, 0.35);
 }
 
-.btn--gradient {
-  background: linear-gradient(90deg, #49aefe 0%, #b849ff 91.827%);
+.btn--gradient,
+.btn--header-invite,
+.btn--hero-invite,
+.btn--cta {
   border: none;
+  background-image: linear-gradient(
+    90deg,
+    #49aefe 0%,
+    #b849ff 50%,
+    #49aefe 100%
+  );
+  background-size: 200% 100%;
+  background-position: 0% 50%;
 }
 
-.btn--gradient:hover {
-  background: linear-gradient(90deg, #b849ff 0%, #49aefe 100%);
+.btn--gradient:hover,
+.btn--header-invite:hover,
+.btn--hero-invite:hover,
+.btn--cta:hover {
+  background-position: 100% 50%;
   box-shadow: 0 4px 20px rgba(73, 174, 254, 0.35);
 }
 
-.btn--header-invite {
-  background: linear-gradient(90deg, #49aefe 0%, #b849ff 91.827%);
-}
-
-.btn--header-invite:hover {
-  background: linear-gradient(90deg, #b849ff 0%, #49aefe 100%);
-}
-
 .btn--hero-invite {
-  background: linear-gradient(90deg, #47b2ff 0%, #b849ff 86.538%);
+  background-image: linear-gradient(
+    90deg,
+    #47b2ff 0%,
+    #b849ff 50%,
+    #47b2ff 100%
+  );
 }
 
-.btn--hero-invite:hover {
-  background: linear-gradient(90deg, #b849ff 0%, #47b2ff 100%);
-  box-shadow: 0 4px 20px rgba(71, 178, 255, 0.35);
+.btn--cta {
+  min-height: 51px;
+  padding: 0 28px;
+  border-radius: 25.5px;
+  font-size: 16px;
+  box-shadow: none;
+  background-image: linear-gradient(
+    90deg,
+    #4dadff 0%,
+    #b849ff 50%,
+    #4dadff 100%
+  );
+}
+
+.btn--cta:hover {
+  box-shadow: 0 6px 24px rgba(184, 73, 255, 0.35);
 }
 
 .btn--outline-magenta {
@@ -87,20 +110,6 @@
   background: rgba(184, 73, 255, 0.28);
   border-color: #d07aff;
   box-shadow: 0 4px 18px rgba(184, 73, 255, 0.35);
-}
-
-.btn--cta {
-  min-height: 51px;
-  padding: 0 28px;
-  border-radius: 25.5px;
-  font-size: 16px;
-  background: linear-gradient(90deg, #4dadff 0%, #b849ff 100%);
-  box-shadow: none;
-}
-
-.btn--cta:hover {
-  background: linear-gradient(90deg, #b849ff 0%, #4dadff 100%);
-  box-shadow: 0 6px 24px rgba(184, 73, 255, 0.35);
 }
 
 .btn__icon {
