@@ -468,9 +468,16 @@ export default function HomePage() {
 
       <section className="cta" id="komandos">
         <h2 className="cta__title">Pasiruošę atnaujinti serverį?</h2>
-        <a href="#invite" className="btn btn--gradient btn--cta">
-          Pridėti SOLIDUS prie serverio
-        </a>
+
+        <div className="cta__action">
+          <div className="cta__aura" aria-hidden="true">
+            <img src={aura} alt="" />
+          </div>
+          <a href="#invite" className="btn btn--gradient btn--cta">
+            Pridėti SOLIDUS prie serverio
+          </a>
+        </div>
+
         <div className="cta__stats">
           {STATS.map((stat) => (
             <div key={stat.label} className="cta__stat">
@@ -478,9 +485,6 @@ export default function HomePage() {
               <p className="cta__stat-label">{stat.label}</p>
             </div>
           ))}
-        </div>
-        <div className="cta__aura" aria-hidden="true">
-          <img src={aura} alt="" />
         </div>
       </section>
 
