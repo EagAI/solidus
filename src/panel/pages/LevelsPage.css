@@ -1,0 +1,80 @@
+.levels__lead {
+  font-size: 13px;
+  color: var(--panel-muted);
+  margin-bottom: 14px;
+  line-height: 1.45;
+}
+
+.levels__grid {
+  display: grid;
+  gap: 12px;
+}
+
+.levels__toggles {
+  display: grid;
+  gap: 8px;
+}
+
+.levels__lvl {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-family: "Anta", sans-serif;
+  font-size: 13px;
+  background: var(--panel-surface);
+  border: 1px solid var(--panel-line);
+}
+
+.levels__role {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.levels__role i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.levels__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.levels__summary {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--panel-surface-3);
+  border: 1px solid var(--panel-line);
+}
+
+.levels__summary strong {
+  display: inline;
+  font-family: "Anta", sans-serif;
+  font-size: 13px;
+}
+
+.levels__summary > strong {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.levels__summary p {
+  font-size: 13px;
+  color: var(--panel-muted);
+  line-height: 1.45;
+}
+
+.levels__form .panel-select {
+  width: 100%;
+}
+
+@media (min-width: 700px) {
+  .levels__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}

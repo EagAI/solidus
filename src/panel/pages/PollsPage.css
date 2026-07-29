@@ -1,0 +1,87 @@
+.polls__hint {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--panel-muted);
+  line-height: 1.4;
+}
+
+.polls__answers {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.polls__answer-row {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.polls__answer-index {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-family: "Anta", sans-serif;
+  background: var(--panel-surface);
+  border: 1px solid var(--panel-line);
+  color: var(--panel-muted);
+}
+
+.polls__item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--panel-surface-3);
+  border: 1px solid var(--panel-line);
+}
+
+.polls__item-main {
+  min-width: 0;
+}
+
+.polls__item-main strong {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 2px;
+  color: var(--panel-text);
+}
+
+.polls__item-main > span {
+  font-size: 12px;
+  color: var(--panel-muted-2);
+}
+
+.polls__item-answers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+  list-style: none;
+}
+
+.polls__item-answers li {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  background: var(--panel-surface);
+  border: 1px solid var(--panel-line);
+  color: var(--panel-text);
+}
+
+@media (max-width: 560px) {
+  .polls__answer-row {
+    grid-template-columns: 28px 1fr;
+  }
+
+  .polls__answer-row .panel-btn {
+    grid-column: 2;
+    justify-self: start;
+  }
+}

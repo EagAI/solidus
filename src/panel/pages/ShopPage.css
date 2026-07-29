@@ -1,0 +1,61 @@
+.shop__item-desc {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--panel-muted-3);
+}
+
+.shop__reward-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  background: var(--panel-surface);
+  border: 1px solid var(--panel-line);
+  color: var(--panel-text);
+  white-space: nowrap;
+}
+
+.shop__settings {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--panel-surface-3);
+  border: 1px solid var(--panel-line);
+}
+
+.shop__settings-title {
+  font-family: "Anta", sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  margin: 0 0 2px;
+  color: var(--panel-text);
+}
+
+.shop__hint {
+  font-size: 12px;
+  color: var(--panel-muted);
+  margin-top: 8px;
+  line-height: 1.45;
+}
+
+.shop__grid {
+  display: grid;
+  gap: 12px;
+}
+
+.shop__toggles {
+  display: grid;
+  gap: 8px;
+}
+
+.shop__form .panel-select {
+  width: 100%;
+}
+
+@media (min-width: 700px) {
+  .shop__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
