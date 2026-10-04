@@ -196,8 +196,8 @@
   background: linear-gradient(180deg, #fb7185 0%, #e11d48 100%);
 }
 
-.uptime__bar--maintenance {
-  background: linear-gradient(180deg, #a78bfa 0%, #7c3aed 100%);
+.uptime__bar--nodata {
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .uptime__timeline-meta {
@@ -270,8 +270,8 @@
   background: #e11d48;
 }
 
-.uptime__swatch--maintenance {
-  background: #7c3aed;
+.uptime__swatch--nodata {
+  background: rgba(255, 255, 255, 0.16);
 }
 
 .uptime__services {
@@ -326,8 +326,8 @@
   background: #e11d48;
 }
 
-.uptime__service-dot--maintenance {
-  background: #7c3aed;
+.uptime__service-dot--nodata {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .uptime__service-meta {
@@ -416,4 +416,29 @@
   .uptime__timeline-meta > span:last-child {
     display: none;
   }
+}
+
+/* Live state of the badge */
+.uptime__badge--down {
+  border-color: rgba(225, 29, 72, 0.5);
+  background: rgba(225, 29, 72, 0.12);
+}
+
+.uptime__badge--down .uptime__badge-dot {
+  background: #e11d48;
+  box-shadow: 0 0 12px rgba(225, 29, 72, 0.7);
+}
+
+.uptime__badge--loading {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.uptime__badge--loading .uptime__badge-dot {
+  background: rgba(255, 255, 255, 0.4);
+  box-shadow: none;
+}
+
+.uptime__empty {
+  color: rgba(255, 255, 255, 0.7);
 }

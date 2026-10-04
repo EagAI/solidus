@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState } from "react";
-import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Link, NavLink, Outlet, useLocation, useNavigate, Navigate } from "react-router-dom";
 import {
   logo,
   menuLogoutIcon,
@@ -8,7 +8,9 @@ import {
   robot,
   themeIcon,
 } from "../assets";
-import { PANEL_NAV, PANEL_USER } from "./panelNav";
+import { PANEL_NAV, type PanelNavItem } from "./panelNav";
+import { initials, usePanelSessionState } from "./session";
+import { GUILD_KEY } from "./data/modules";
 import "./PanelLayout.css";
 import "./panel.css";
 
@@ -72,6 +74,74 @@ function ThemeSwatch({ theme }: { theme: PanelTheme }) {
   );
 }
 
+function NavBranch({ item }: { item: PanelNavItem }) {
+  const { pathname } = useLocation();
+  const open = pathname.startsWith(item.to);
+  const [expanded, setExpanded] = useState(open);
+
+  useEffect(() => {
+    if (open) setExpanded(true);
+  }, [open]);
+
+  if (!item.children?.length) {
+    return (
+      <NavLink
+        to={item.to}
+        end={item.end}
+        className={({ isActive }) => "panel__nav-link" + (isActive ? " is-active" : "")}
+      >
+        <span>{item.label}</span>
+        {item.badge ? <span className="panel__nav-badge">{item.badge}</span> : null}
+      </NavLink>
+    );
+  }
+
+  return (
+    <div className={"panel__nav-branch" + (expanded ? " is-open" : "")}>
+      <button
+        type="button"
+        className={"panel__nav-link panel__nav-parent" + (open ? " is-active" : "")}
+        aria-expanded={expanded}
+        onClick={() => setExpanded((value) => !value)}
+      >
+        <span>{item.label}</span>
+        <svg viewBox="0 0 12 8" aria-hidden="true">
+          <path
+            d="M1 1.5 6 6.5 11 1.5"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+          />
+        </svg>
+      </button>
+      {expanded ? (
+        <div className="panel__nav-sub">
+          {item.children.map((child) => (
+            <NavLink
+              key={child.to}
+              to={child.to}
+              className={({ isActive }) =>
+                "panel__nav-link panel__nav-sublink" + (isActive ? " is-active" : "")
+              }
+            >
+              <span>{child.label}</span>
+            </NavLink>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function UserAvatar({ name, src }: { name: string; src: string | null }) {
+  return (
+    <span className="panel__avatar" aria-hidden="true">
+      {src ? <img src={src} alt="" /> : initials(name)}
+    </span>
+  );
+}
+
 export default function PanelLayout() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [themeOpen, setThemeOpen] = useState(false);
@@ -80,15 +150,33 @@ export default function PanelLayout() {
   const [theme, setTheme] = useState<PanelTheme>(() => readTheme());
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const [, setGuildId] = useState(() => localStorage.getItem(GUILD_KEY) || "");
+  // Read on every render: pages set it right before navigate(), so state would lag a render.
+  const guildId = localStorage.getItem(GUILD_KEY) || "";
   const themeRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
   const themeMenuId = useId();
   const userMenuId = useId();
+  const sessionCtx = usePanelSessionState();
+  const { session } = sessionCtx;
+  const user = session.status === "ready" ? session.user : null;
+  const activeGuild =
+    session.status === "ready"
+      ? session.guilds.find((g) => g.id === guildId && g.canManage && g.botIn) ?? null
+      : null;
+
+  // Stored server is no longer manageable (left it, lost perms, bot kicked) → forget it.
+  useEffect(() => {
+    if (session.status !== "ready" || !guildId || activeGuild) return;
+    localStorage.removeItem(GUILD_KEY);
+    setGuildId("");
+  }, [session.status, guildId, activeGuild]);
 
   useEffect(() => {
     setMenuOpen(false);
     setThemeOpen(false);
     setUserOpen(false);
+    setGuildId(localStorage.getItem(GUILD_KEY) || "");
   }, [pathname]);
 
   useEffect(() => {
@@ -145,6 +233,22 @@ export default function PanelLayout() {
   function showToast(message: string) {
     setToast(message);
     window.setTimeout(() => setToast(null), 2200);
+  }
+
+  const signedIn = session.status === "ready";
+  const nav = guildId && signedIn
+    ? PANEL_NAV
+    : PANEL_NAV.filter((group) => group.id === "home").map((group) => ({
+        ...group,
+        items: group.items.filter((item) => item.to === "/panel"),
+      }));
+
+  const blocked =
+    session.status === "guest" ||
+    session.status === "offline" ||
+    (session.status === "ready" && !activeGuild);
+  if (pathname !== "/panel" && (!guildId || blocked)) {
+    return <Navigate to="/panel" replace />;
   }
 
   return (
@@ -209,6 +313,7 @@ export default function PanelLayout() {
             ) : null}
           </div>
 
+          {user ? (
           <div className="panel__user-wrap" ref={userRef}>
             <button
               type="button"
@@ -222,12 +327,10 @@ export default function PanelLayout() {
                 setThemeOpen(false);
               }}
             >
-              <span className="panel__avatar" aria-hidden="true">
-                {PANEL_USER.initials}
-              </span>
+              <UserAvatar name={user?.globalName ?? ""} src={user?.avatar ?? null} />
               <span className="panel__user-meta">
-                <strong>{PANEL_USER.name}</strong>
-                <span>{PANEL_USER.role}</span>
+                <strong>{user?.globalName}</strong>
+                <span>{activeGuild?.name ?? "Serveris nepasirinktas"}</span>
               </span>
             </button>
 
@@ -239,12 +342,10 @@ export default function PanelLayout() {
                 aria-label="Vartotojo parinktys"
               >
                 <div className="panel__user-menu-head">
-                  <span className="panel__avatar" aria-hidden="true">
-                    {PANEL_USER.initials}
-                  </span>
+                  <UserAvatar name={user?.globalName ?? ""} src={user?.avatar ?? null} />
                   <div>
-                    <strong>{PANEL_USER.name}</strong>
-                    <span>{PANEL_USER.role}</span>
+                    <strong>{user?.globalName}</strong>
+                    <span>@{user?.username}</span>
                   </div>
                 </div>
 
@@ -254,11 +355,11 @@ export default function PanelLayout() {
                   className="panel__user-menu-item"
                   onClick={() => {
                     setUserOpen(false);
-                    showToast("Profilis (mock)");
+                    navigate("/panel");
                   }}
                 >
                   <img src={menuUserIcon} alt="" width={18} height={18} />
-                  Profilis
+                  Keisti serverį
                 </button>
 
                 <button
@@ -282,8 +383,12 @@ export default function PanelLayout() {
                   className="panel__user-menu-item panel__user-menu-item--danger"
                   onClick={() => {
                     setUserOpen(false);
-                    showToast("Atsijungta (mock)");
-                    navigate("/");
+                    localStorage.removeItem(GUILD_KEY);
+                    setGuildId("");
+                    void sessionCtx.logout().then(() => {
+                      showToast("Atsijungta");
+                      navigate("/panel");
+                    });
                   }}
                 >
                   <img src={menuLogoutIcon} alt="" width={18} height={18} />
@@ -292,6 +397,7 @@ export default function PanelLayout() {
               </div>
             ) : null}
           </div>
+          ) : null}
 
           <button
             type="button"
@@ -320,25 +426,13 @@ export default function PanelLayout() {
           </div>
 
           <nav aria-label="Panelio navigacija">
-            {PANEL_NAV.map((group) => (
+            {nav.map((group) => (
               <div key={group.id} className="panel__nav-group">
                 {group.label ? (
                   <p className="panel__nav-label">{group.label}</p>
                 ) : null}
                 {group.items.map((item) => (
-                  <NavLink
-                    key={item.to}
-                    to={item.to}
-                    end={item.end}
-                    className={({ isActive }) =>
-                      "panel__nav-link" + (isActive ? " is-active" : "")
-                    }
-                  >
-                    <span>{item.label}</span>
-                    {item.badge ? (
-                      <span className="panel__nav-badge">{item.badge}</span>
-                    ) : null}
-                  </NavLink>
+                  <NavBranch key={item.to} item={item} />
                 ))}
               </div>
             ))}
@@ -352,7 +446,7 @@ export default function PanelLayout() {
         </aside>
 
         <main className="panel__main">
-          <Outlet />
+          <Outlet context={sessionCtx} />
         </main>
       </div>
 

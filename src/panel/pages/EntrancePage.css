@@ -1,0 +1,75 @@
+.entrance__choices {
+  display: grid;
+  gap: 16px;
+}
+
+.entrance__choice {
+  text-align: left;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid var(--panel-line);
+  background: var(--panel-card);
+  color: var(--panel-text);
+  cursor: pointer;
+}
+
+.entrance__choice.is-active {
+  border-color: var(--panel-active-border);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--panel-line-strong) 40%, transparent);
+}
+
+.entrance__choice p {
+  margin-top: 10px;
+  font-family: "Anta", sans-serif;
+}
+
+.entrance__banner,
+.entrance__card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 92px;
+  padding: 14px;
+  border-radius: 12px;
+  background: linear-gradient(120deg, #1a1614, #3a2418);
+  color: #fff;
+}
+
+.entrance__card {
+  flex-direction: column;
+  justify-content: center;
+  background: linear-gradient(180deg, #1a0a0a, #4a1515);
+  text-align: center;
+}
+
+.entrance__banner strong,
+.entrance__card strong {
+  display: block;
+}
+
+.entrance__banner em,
+.entrance__card em {
+  font-style: normal;
+  font-size: 12px;
+  opacity: 0.75;
+}
+
+.entrance__avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffb347, #f26522);
+  flex-shrink: 0;
+}
+
+.entrance__avatar--lg {
+  width: 64px;
+  height: 64px;
+  box-shadow: 0 0 0 4px #e03030;
+}
+
+@media (min-width: 800px) {
+  .entrance__choices {
+    grid-template-columns: 1fr 1fr;
+  }
+}

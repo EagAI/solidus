@@ -13,7 +13,10 @@ RUN npm run build
 
 FROM nginx:1.27-alpine AS runtime
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Rendered by the nginx image at start: only ${BOT_API_URL} is substituted.
+ENV BOT_API_URL=http://127.0.0.1:3847
+ENV NGINX_ENVSUBST_FILTER=^BOT_API_URL$
+COPY nginx.conf /etc/nginx/templates/default.conf.template
 COPY --from=build /app/dist /usr/share/nginx/html
 
 CMD ["nginx", "-g", "daemon off;"]

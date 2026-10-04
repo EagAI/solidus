@@ -1,9 +1,10 @@
-export { default as logo } from "./solidus-logo.png";
+export { default as logo } from "./solidus-logo.webp";
 export { default as solidusWordmark } from "./solidus-uzrasas.png";
-export { default as robot } from "./robot.png";
-export { default as wave } from "./banga.jpg";
-export { default as subtleWave } from "./subtle-wave.gif";
-export { default as aura } from "./aura-blue-purple.jpg";
+export { default as robot } from "./robot.webp";
+export { default as robotNoEyes } from "./robot-hero.webp";
+export { default as subtleWaveWebm } from "./subtle-wave.webm";
+export { default as subtleWaveMp4 } from "./subtle-wave.mp4";
+export { default as aura } from "./aura-blue-purple.webp";
 export { default as discordIcon } from "./discord-icon.svg";
 export { default as arrowIcon } from "./arrow.svg";
 export { default as ellipse } from "./ellipse1.svg";

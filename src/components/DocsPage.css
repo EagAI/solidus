@@ -281,6 +281,7 @@
 
 .docs__steps li::before {
   content: counter(step);
+  grid-row: span 2;
   width: 42px;
   height: 42px;
   border-radius: 50%;
@@ -292,6 +293,7 @@
 }
 
 .docs__steps li strong {
+  grid-column: 2;
   display: block;
   font-family: "Anta", sans-serif;
   font-weight: 400;
@@ -300,6 +302,7 @@
 }
 
 .docs__steps li span {
+  grid-column: 2;
   display: block;
   font-size: 15px;
   line-height: 1.55;

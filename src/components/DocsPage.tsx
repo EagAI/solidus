@@ -22,13 +22,13 @@ type DocSection = {
 const TOC: DocSection[] = [
   { id: "pradzia", label: "Pradžia", group: "Bendri" },
   { id: "idiegimas", label: "Įdiegimas", group: "Bendri" },
+  { id: "panele", label: "Valdymo panelė", icon: tinkinimasIcon, group: "Bendri" },
   { id: "moderavimas", label: "Moderavimas", icon: moderavimasIcon, group: "Funkcijos" },
-  { id: "irankiai", label: "Įrankiai", icon: irankiaiIcon, group: "Funkcijos" },
-  { id: "ekonomika", label: "Ekonomika", icon: ekonomikaIcon, group: "Funkcijos" },
+  { id: "lygiai", label: "Lygiai ir XP", icon: ekonomikaIcon, group: "Funkcijos" },
+  { id: "irankiai", label: "Tiketai ir giveaway", icon: irankiaiIcon, group: "Funkcijos" },
   { id: "automatika", label: "Automatika", icon: automatikaIcon, group: "Funkcijos" },
   { id: "apsauga", label: "Apsauga", icon: saugumasIcon, group: "Funkcijos" },
-  { id: "tinkinimas", label: "Tinkinimas", icon: tinkinimasIcon, group: "Funkcijos" },
-  { id: "komandos", label: "Komandos", group: "Naudojimas" },
+  { id: "komandos", label: "Visos komandos", group: "Naudojimas" },
   { id: "duk", label: "DUK", group: "Naudojimas" },
 ];
 
@@ -97,7 +97,7 @@ export default function DocsPage() {
             <p className="docs__sidebar-kicker">Dokumentacija</p>
             <h1 className="docs__sidebar-title">Solidus gidas</h1>
             <p className="docs__sidebar-desc">
-              Visos bot funkcijos, komandos ir nustatymai vienoje vietoje.
+              Visos boto funkcijos, komandos ir valdymo panelė vienoje vietoje.
             </p>
 
             <nav className="docs__toc" ref={navRef} aria-label="Turinys">
@@ -149,22 +149,28 @@ export default function DocsPage() {
             <p className="docs__eyebrow">Pradžia</p>
             <h2>Sveiki atvykę į Solidus</h2>
             <p>
-              Solidus — galingas ir paprastas Discord botas bendruomenių
-              valdymui, apsaugai ir augimui. Ši dokumentacija padės greitai
-              įdiegti botą ir išnaudoti visas funkcijas.
+              Solidus — lietuviškas Discord botas bendruomenėms: lygiai ir XP,
+              moderavimas, tiketai, giveaway, automatiniai pasveikinimai ir
+              apsauga nuo sukčių. Nustatymai keičiami svetainės valdymo
+              panelėje, o kasdienis darbas vyksta per slash komandas.
             </p>
             <div className="docs__cards">
               <article className="docs__card">
-                <h3>Greitas startas</h3>
-                <p>Įkelkite botą, suteikite teises ir pradėkite per kelias minutes.</p>
+                <h3>Pakvietimas per panelę</h3>
+                <p>
+                  Prisijunk su Discord, pasirink serverį ir pakviesk botą vienu
+                  paspaudimu.
+                </p>
               </article>
               <article className="docs__card">
-                <h3>Moduliai</h3>
-                <p>Moderavimas, ekonomika, automatika, apsauga ir tinkinimas.</p>
+                <h3>Nustatymai per serverį</h3>
+                <p>Kiekvienas serveris turi savo modulius, kanalus ir roles.</p>
               </article>
               <article className="docs__card">
                 <h3>Slash komandos</h3>
-                <p>Visos pagrindinės komandos veikia per Discord slash meniu.</p>
+                <p>
+                  Įvesk <code>/</code> Discord'e ir pasirink Solidus komandą.
+                </p>
               </article>
             </div>
           </section>
@@ -174,30 +180,95 @@ export default function DocsPage() {
             <h2>Įdiegimas</h2>
             <ol className="docs__steps">
               <li>
-                <strong>Įkelkite Solidus</strong>
-                <span>Paspauskite „Įkelti į DISCORD“ ir pasirinkite serverį.</span>
-              </li>
-              <li>
-                <strong>Suteikite teises</strong>
+                <strong>Atidaryk valdymo panelę</strong>
                 <span>
-                  Rekomenduojame rolę su Manage Messages, Manage Roles, Kick/Ban
-                  ir View Channels.
+                  Eik į <Link to="/panel">solidus.bot/panel</Link> ir spausk
+                  „Prisijungti su Discord“.
                 </span>
               </li>
               <li>
-                <strong>Paleiskite sąranką</strong>
+                <strong>Pasirink serverį</strong>
                 <span>
-                  Naudokite <code>/setup</code> ir pasirinkite log kanalą bei
-                  pagrindines roles.
+                  Skiltyje „Pakviesk Solidus“ prie norimo serverio spausk
+                  „Pakviesti“. Discord lange serveris jau bus pažymėtas.
                 </span>
               </li>
               <li>
-                <strong>Patikrinkite veikimą</strong>
+                <strong>Patvirtink teises</strong>
                 <span>
-                  Įveskite <code>/help</code> — jei botas atsako, viskas veikia.
+                  Botas prašo Administrator teisės, kad veiktų moderavimas,
+                  rolės, tiketų kanalai ir voice kambariai.
+                </span>
+              </li>
+              <li>
+                <strong>Patikrink veikimą</strong>
+                <span>
+                  Grįžk į panelę — serveris atsiras skiltyje „Valdomi serveriai“.
+                  Discord'e įvesk <code>/lygis</code>: jei botas atsako, viskas
+                  veikia.
                 </span>
               </li>
             </ol>
+          </section>
+
+          <section className="docs__section" id="panele">
+            <p className="docs__eyebrow">Bendri</p>
+            <div className="docs__heading-row">
+              <img src={tinkinimasIcon} alt="" width={32} height={32} />
+              <h2>Valdymo panelė</h2>
+            </div>
+            <p>
+              Prisijungęs su Discord matai visus savo serverius, suskirstytus į
+              tris grupes:
+            </p>
+            <div className="docs__table-wrap">
+              <table className="docs__table">
+                <thead>
+                  <tr>
+                    <th>Grupė</th>
+                    <th>Kas čia patenka</th>
+                    <th>Ką gali daryti</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Valdomi serveriai</td>
+                    <td>
+                      Esi savininkas, Administrator arba turi Manage Server, ir
+                      Solidus jau yra
+                    </td>
+                    <td>„Valdyti“ — keisti serverio nustatymus</td>
+                  </tr>
+                  <tr>
+                    <td>Pakviesk Solidus</td>
+                    <td>Turi tas pačias teises, bet boto dar nėra</td>
+                    <td>„Pakviesti“ — įkelti botą</td>
+                  </tr>
+                  <tr>
+                    <td>Kiti serveriai</td>
+                    <td>Esi paprastas narys</td>
+                    <td>Tik matai, ar Solidus ten veikia</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <ul className="docs__bullets">
+              <li>
+                <strong>Nustatymai saugomi atskirai kiekvienam serveriui</strong>{" "}
+                — pakeitimai viename neturi įtakos kitam.
+              </li>
+              <li>
+                <strong>Moduliai</strong> — įjunk ar išjunk pasveikinimus,
+                atsisveikinimus, autorolę, lygius, tiketus, <code>/parukom</code>{" "}
+                ir <code>/slap</code>. Išjungto modulio komandos dingsta iš
+                Discord meniu.
+              </li>
+              <li>
+                <strong>Saugumas</strong> — serverio nustatymus mato ir keičia
+                tik tie, kas tą serverį valdo Discord'e. Praradus teises,
+                prieiga prie panelės dingsta.
+              </li>
+            </ul>
           </section>
 
           <section className="docs__section" id="moderavimas">
@@ -207,8 +278,8 @@ export default function DocsPage() {
               <h2>Moderavimas</h2>
             </div>
             <p>
-              Greiti ir saugūs moderavimo veiksmai su aiškiais logais. Išsaugokite
-              tvarką be chaoso pokalbiuose.
+              Moderavimo komandas gali naudoti serverio savininkas ir
+              moderatorių rolės.
             </p>
             <div className="docs__table-wrap">
               <table className="docs__table">
@@ -221,109 +292,124 @@ export default function DocsPage() {
                 <tbody>
                   <tr>
                     <td>
-                      <code>/warn</code>
+                      <code>/admin ban</code>
                     </td>
-                    <td>Įspėja narį ir įrašo priežastį į logus.</td>
+                    <td>Užbanina narį, priežastis nebūtina.</td>
                   </tr>
                   <tr>
                     <td>
-                      <code>/mute</code>
+                      <code>/admin kick</code>
                     </td>
-                    <td>Laikinai apriboja rašymą pasirinktame kanale ar visur.</td>
+                    <td>Išmeta narį iš serverio.</td>
                   </tr>
                   <tr>
                     <td>
-                      <code>/kick</code>
+                      <code>/admin timeout</code>
                     </td>
-                    <td>Pašalina narį iš serverio su priežastimi.</td>
+                    <td>
+                      Laiko limitas nariui: <code>30min</code>, <code>2h</code>,{" "}
+                      <code>1d</code> arba skaičius minutėmis.
+                    </td>
                   </tr>
                   <tr>
                     <td>
-                      <code>/ban</code>
+                      <code>/admin bomb</code>
                     </td>
-                    <td>Užblokuoja narį ir neleidžia grįžti be leidimo.</td>
+                    <td>10 sekundžių timeout su pranešimu kanale.</td>
                   </tr>
                   <tr>
                     <td>
-                      <code>/purge</code>
+                      <code>/admin purge</code>
                     </td>
-                    <td>Išvalo nurodytą žinučių kiekį kanale.</td>
+                    <td>Ištrina žinutes kanale (iki 100 vienu kartu).</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <code>/slap</code>
+                    </td>
+                    <td>
+                      Atsako į žinutę slap GIF'u, duoda timeout ir atima XP.
+                      Reikia Moderate Members teisės.
+                    </td>
                   </tr>
                 </tbody>
               </table>
             </div>
+            <p>
+              Redaguotos ir ištrintos žinutės automatiškai užfiksuojamos logų
+              kanale.
+            </p>
+          </section>
+
+          <section className="docs__section" id="lygiai">
+            <p className="docs__eyebrow">Funkcijos</p>
+            <div className="docs__heading-row">
+              <img src={ekonomikaIcon} alt="" width={32} height={32} />
+              <h2>Lygiai ir XP</h2>
+            </div>
+            <p>
+              Nariai gauna XP už bendravimą ir kyla lygiais. Numatyta: 15 XP už
+              žinutę, ne dažniau nei kas 5 sekundes.
+            </p>
+            <div className="docs__cards docs__cards--2">
+              <article className="docs__card">
+                <h3>Lygio kortelė</h3>
+                <p>
+                  <code>/lygis</code> parodo tavo ar kito nario kortelę su XP
+                  progresu.
+                </p>
+              </article>
+              <article className="docs__card">
+                <h3>Lyderių lentelė</h3>
+                <p>
+                  <code>/lyderiai</code> — top 15 narių pagal XP kaip grafika.
+                </p>
+              </article>
+              <article className="docs__card">
+                <h3>Lygio pakilimai</h3>
+                <p>
+                  Pakilus lygiu, botas paskelbia kortelę. Ypatingiems lygiams —
+                  didesnė, šventinė.
+                </p>
+              </article>
+              <article className="docs__card">
+                <h3>Lygio rolės</h3>
+                <p>
+                  Pasiekus lygį, suteikiama rolė. Galima palikti tik aukščiausią
+                  arba kaupti visas.
+                </p>
+              </article>
+            </div>
+            <p>
+              Moderatoriai gali uždėti nariui individualų kortelės foną su{" "}
+              <code>/admin lygisbg</code>.
+            </p>
           </section>
 
           <section className="docs__section" id="irankiai">
             <p className="docs__eyebrow">Funkcijos</p>
             <div className="docs__heading-row">
               <img src={irankiaiIcon} alt="" width={32} height={32} />
-              <h2>Įrankiai</h2>
+              <h2>Tiketai ir giveaway</h2>
             </div>
-            <p>
-              Kasdieniai serverio įrankiai rolėms, kanalams ir narių valdymui —
-              be papildomų skydelių.
-            </p>
             <ul className="docs__bullets">
               <li>
-                <strong>Role meniu</strong> — nariai patys pasiima roles per
-                mygtukus ar select meniu.
+                <strong>Tiketai</strong> — <code>/ticket</code> išsiunčia
+                skydelį į kanalą. Narys pasirenka kategoriją (Pagalba,
+                Pranešimas, Klausimas), ir botas sukuria privatų kanalą su
+                komanda. Visa tiketų istorija matoma panelėje.
               </li>
               <li>
-                <strong>Embed kūrimas</strong> — gražūs skelbimai ir taisyklės
-                per <code>/embed</code>.
+                <strong>Giveaway</strong> — <code>/giveaway create</code>{" "}
+                atidaro formą prizui ir trukmei. <code>/giveaway end</code>{" "}
+                baigia anksčiau, <code>/giveaway reroll</code> išrenka naujus
+                laimėtojus.
               </li>
               <li>
-                <strong>Šablonai</strong> — išsaugokite dažnus veiksmus ir
-                paleiskite juos vienu mygtuku.
-              </li>
-              <li>
-                <strong>Statistika</strong> — serverio aktyvumo ir narių
-                suvestinės.
+                <strong>/parukom</strong> — 10 minučių kvietimas „parūkyti“ su
+                mygtuku. Prisijungę gauna šiek tiek XP.
               </li>
             </ul>
-          </section>
-
-          <section className="docs__section" id="ekonomika">
-            <p className="docs__eyebrow">Funkcijos</p>
-            <div className="docs__heading-row">
-              <img src={ekonomikaIcon} alt="" width={32} height={32} />
-              <h2>Ekonomika</h2>
-            </div>
-            <p>
-              Sukurkite serverio ekonomiką su balansu, parduotuve ir
-              apdovanojimais už aktyvumą.
-            </p>
-            <div className="docs__cards docs__cards--2">
-              <article className="docs__card">
-                <h3>Valiuta</h3>
-                <p>
-                  Nustatykite pavadinimą, simbolį ir pradinius kreditus naujiems
-                  nariams.
-                </p>
-              </article>
-              <article className="docs__card">
-                <h3>Parduotuvė</h3>
-                <p>
-                  Pardavinėkite roles, daiktus ar privilegijas už serverio
-                  kreditus.
-                </p>
-              </article>
-              <article className="docs__card">
-                <h3>Darbai</h3>
-                <p>
-                  Kasdieniai <code>/work</code>, <code>/daily</code> ir kiti
-                  uždarbio šaltiniai.
-                </p>
-              </article>
-              <article className="docs__card">
-                <h3>Lyderių lentelė</h3>
-                <p>
-                  Rodykite turtingiausius narius ir skatinkite sveiką
-                  konkurenciją.
-                </p>
-              </article>
-            </div>
           </section>
 
           <section className="docs__section" id="automatika">
@@ -332,25 +418,27 @@ export default function DocsPage() {
               <img src={automatikaIcon} alt="" width={32} height={32} />
               <h2>Automatika</h2>
             </div>
-            <p>
-              Automatizuokite pasveikinimus, roles, priminimus ir reakcijas pagal
-              įvykius.
-            </p>
             <ul className="docs__bullets">
               <li>
-                <strong>Welcome srautai</strong> — automatinė žinutė, rolė ir DM
-                naujiems nariams.
+                <strong>Pasveikinimai</strong> — naujam nariui pasveikinimas
+                kanale, baneris arba kortelė (keičiama panelėje).
               </li>
               <li>
-                <strong>Reaction roles</strong> — rolės pagal emoji reakcijas.
+                <strong>Atsisveikinimai</strong> — žinutė išėjus nariui, su{" "}
+                <code>{"{user}"}</code> vietoje vardo.
               </li>
               <li>
-                <strong>Planuoti pranešimai</strong> — skelbimai ir reminderiai
-                pagal grafiką.
+                <strong>Autorolė ir patvirtinimas</strong> — prisijungęs narys
+                gauna rolę, o paspaudęs patvirtinimo mygtuką — pilną prieigą.
               </li>
               <li>
-                <strong>Trigeriai</strong> — paleiskite veiksmus pagal žodžius,
-                roles ar kanalus.
+                <strong>Voice kambariai</strong> — prisijungus prie „hub“
+                kanalo, botas sukuria tau asmeninį voice kambarį ir ištrina jį,
+                kai visi išeina.
+              </li>
+              <li>
+                <strong>YouTube skelbimai</strong> — naujas vaizdo įrašas ar
+                live automatiškai paskelbiamas kanale.
               </li>
             </ul>
           </section>
@@ -361,126 +449,104 @@ export default function DocsPage() {
               <img src={saugumasIcon} alt="" width={32} height={32} />
               <h2>Apsauga</h2>
             </div>
-            <p>
-              Apsaugokite bendruomenę nuo spamo, raidų ir kenksmingų nuorodų dar
-              prieš incidentams išaugant.
-            </p>
             <div className="docs__table-wrap">
               <table className="docs__table">
                 <thead>
                   <tr>
-                    <th>Filtras</th>
+                    <th>Apsauga</th>
                     <th>Ką daro</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td>Anti-spam</td>
-                    <td>Ribojimai greitam žinučių ir mention spamui.</td>
+                    <td>Anti-scam (nuotraukos)</td>
+                    <td>
+                      Nuskaito įkeltų nuotraukų tekstą ir atpažįsta sukčių
+                      schemas (netikri giveaway, „nemokamas Nitro“). Siuntėjas
+                      gauna timeout, o moderatoriai — pranešimą su mygtukais.
+                    </td>
                   </tr>
                   <tr>
-                    <td>Anti-raid</td>
-                    <td>Laikinai stabdo masinius join’us ir automatiškai mute’ina.</td>
+                    <td>Discord pakvietimai</td>
+                    <td>
+                      Svetimų serverių pakvietimai ištrinami, siuntėjui
+                      skiriamas timeout. Moderatoriai gali užbaninti arba nuimti
+                      bausmę vienu mygtuku.
+                    </td>
                   </tr>
                   <tr>
-                    <td>Nuorodų filtras</td>
-                    <td>Blokuoja nežinomus ar pavojingus domenus.</td>
-                  </tr>
-                  <tr>
-                    <td>Žodžių filtras</td>
-                    <td>Automatiškai trina arba mute’ina pagal blacklist.</td>
+                    <td>Tik nuotraukų kanalai</td>
+                    <td>
+                      Pasirinktuose kanaluose tekstinės žinutės be nuotraukos
+                      trinamos.
+                    </td>
                   </tr>
                 </tbody>
               </table>
             </div>
           </section>
 
-          <section className="docs__section" id="tinkinimas">
-            <p className="docs__eyebrow">Funkcijos</p>
-            <div className="docs__heading-row">
-              <img src={tinkinimasIcon} alt="" width={32} height={32} />
-              <h2>Tinkinimas</h2>
-            </div>
-            <p>
-              Derinkite Solidus pagal savo serverio stilių — kalbą, teises,
-              žinutes ir modulius.
-            </p>
-            <ul className="docs__bullets">
-              <li>
-                <strong>Kalba</strong> — lietuvių / anglų atsakymai.
-              </li>
-              <li>
-                <strong>Prefix / slash</strong> — pasirinkite kaip nariai kviečia
-                komandas.
-              </li>
-              <li>
-                <strong>Moduliai</strong> — įjunkite tik tai, ko reikia jūsų
-                bendruomenei.
-              </li>
-              <li>
-                <strong>Teisių matricos</strong> — apribokite komandas pagal roles.
-              </li>
-            </ul>
-          </section>
-
           <section className="docs__section" id="komandos">
             <p className="docs__eyebrow">Naudojimas</p>
-            <h2>Komandos</h2>
-            <p>
-              Dažniausios slash komandos. Pilną sąrašą visada rasite su{" "}
-              <code>/help</code>.
-            </p>
+            <h2>Visos komandos</h2>
             <div className="docs__table-wrap">
               <table className="docs__table">
                 <thead>
                   <tr>
                     <th>Komanda</th>
-                    <th>Modulis</th>
+                    <th>Kas gali</th>
                     <th>Aprašymas</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
                     <td>
-                      <code>/setup</code>
+                      <code>/lygis [narys]</code>
                     </td>
-                    <td>Bendri</td>
-                    <td>Pradinė serverio konfigūracija.</td>
+                    <td>Visi</td>
+                    <td>Lygio kortelė.</td>
                   </tr>
                   <tr>
                     <td>
-                      <code>/help</code>
+                      <code>/lyderiai</code>
                     </td>
-                    <td>Bendri</td>
-                    <td>Komandų pagalba ir moduliai.</td>
+                    <td>Visi</td>
+                    <td>Top 15 pagal XP.</td>
                   </tr>
                   <tr>
                     <td>
-                      <code>/userinfo</code>
+                      <code>/parukom</code>
                     </td>
-                    <td>Įrankiai</td>
-                    <td>Nario informacija ir rolės.</td>
+                    <td>Visi</td>
+                    <td>Rūkalio kvietimas kanale.</td>
                   </tr>
                   <tr>
                     <td>
-                      <code>/balance</code>
+                      <code>/admin …</code>
                     </td>
-                    <td>Ekonomika</td>
-                    <td>Parodo kreditų balansą.</td>
+                    <td>Moderatoriai</td>
+                    <td>ban, kick, timeout, bomb, purge, lygisbg.</td>
                   </tr>
                   <tr>
                     <td>
-                      <code>/automod</code>
+                      <code>/giveaway …</code>
                     </td>
-                    <td>Apsauga</td>
-                    <td>Automod filtrų nustatymai.</td>
+                    <td>Moderatoriai</td>
+                    <td>create, end, reroll.</td>
                   </tr>
                   <tr>
                     <td>
-                      <code>/config</code>
+                      <code>/slap</code>
                     </td>
-                    <td>Tinkinimas</td>
-                    <td>Serverio nustatymų skydelis.</td>
+                    <td>Moderate Members</td>
+                    <td>Slap GIF, timeout ir XP bauda.</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <code>/ticket</code>
+                    </td>
+                    <td>Manage Channels</td>
+                    <td>Tiketų skydelis į kanalą.</td>
                   </tr>
                 </tbody>
               </table>
@@ -492,32 +558,43 @@ export default function DocsPage() {
             <h2>Dažni klausimai</h2>
             <div className="docs__faq">
               <details open>
-                <summary>Kodėl botas neatsako į komandas?</summary>
+                <summary>Kodėl nematau savo serverio panelėje?</summary>
                 <p>
-                  Patikrinkite, ar Solidus turi teisę matyti kanalą ir naudoti
-                  slash komandas. Taip pat paleiskite Discord iš naujo, kad
-                  atsinaujintų komandų meniu.
+                  Panelė leidžia valdyti tik serverius, kuriuose esi savininkas
+                  arba turi Administrator ar Manage Server teisę. Jei teisę
+                  gavai ką tik, spausk „Atnaujinti sąrašą“.
                 </p>
               </details>
               <details>
-                <summary>Ar galima išjungti atskirus modulius?</summary>
+                <summary>
+                  Pakviečiau botą, bet serveris vis dar „Pakviesk Solidus“
+                  skiltyje.
+                </summary>
                 <p>
-                  Taip. Naudokite <code>/config modules</code> ir išjunkite
-                  nereikalingas funkcijas.
+                  Grįžk į panelės skirtuką — sąrašas atsinaujina automatiškai.
+                  Jei ne, spausk „Atnaujinti sąrašą“.
                 </p>
               </details>
               <details>
-                <summary>Kur keliauja moderavimo logai?</summary>
+                <summary>Kodėl komanda nerodoma Discord meniu?</summary>
                 <p>
-                  Į kanalą, kurį pasirinkote per <code>/setup</code> arba{" "}
-                  <code>/config logs</code>.
+                  Gali būti, kad modulis išjungtas panelėje, arba tau trūksta
+                  teisės (pvz. <code>/ticket</code> reikia Manage Channels).
+                  Paleisk Discord iš naujo, kad atsinaujintų komandų sąrašas.
+                </p>
+              </details>
+              <details>
+                <summary>Kaip išjungti funkciją, kurios nereikia?</summary>
+                <p>
+                  Panelėje pasirink serverį ir išjunk modulį. Pakeitimai
+                  įsigalioja iš karto.
                 </p>
               </details>
               <details>
                 <summary>Kaip gauti daugiau pagalbos?</summary>
                 <p>
-                  Eikite į <Link to="/pagalba">Pagalbos</Link> puslapį arba
-                  parašykite per Discord, WhatsApp ar X.
+                  Eik į <Link to="/pagalba#kontaktai">Pagalbos</Link> puslapį —
+                  ten rasi kontaktus ir <Link to="/uptime">sistemos statusą</Link>.
                 </p>
               </details>
             </div>

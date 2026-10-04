@@ -1,11 +1,10 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
-  buildUptimeTimeline,
-  overallUptime,
-  RECENT_INCIDENTS,
-  SERVICES,
+  averageUptime,
+  buildTimeline,
   STATUS_LABEL,
+  useUptime,
   type DayStatus,
   type UptimeDay,
 } from "../data/uptime";
@@ -22,8 +21,8 @@ function formatDayLabel(date: string) {
   });
 }
 
-function formatDateTime(iso: string) {
-  return new Date(iso).toLocaleString("lt-LT", {
+function formatDateTime(ts: number) {
+  return new Date(ts).toLocaleString("lt-LT", {
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -32,8 +31,24 @@ function formatDateTime(iso: string) {
   });
 }
 
-function barClass(status: DayStatus) {
-  return `uptime__bar uptime__bar--${status}`;
+function formatDuration(ms: number) {
+  const min = Math.floor(ms / 60_000);
+  const d = Math.floor(min / 1440);
+  const h = Math.floor((min % 1440) / 60);
+  const m = min % 60;
+  if (d) return `${d} d. ${h} val.`;
+  if (h) return `${h} val. ${m} min.`;
+  return `${m} min.`;
+}
+
+function percent(value: number | null) {
+  return value === null ? "—" : `${value.toFixed(2)}%`;
+}
+
+function dayText(day: UptimeDay) {
+  return day.uptime === null
+    ? STATUS_LABEL.nodata
+    : `${STATUS_LABEL[day.status]} · ${day.uptime.toFixed(2)}%`;
 }
 
 function UptimeTimeline({ days }: { days: UptimeDay[] }) {
@@ -41,14 +56,14 @@ function UptimeTimeline({ days }: { days: UptimeDay[] }) {
 
   return (
     <div className="uptime__timeline">
-      <div className="uptime__bars" role="img" aria-label="90 dienų uptime timeline">
+      <div className="uptime__bars" role="img" aria-label="90 dienų veikimo istorija">
         {days.map((day) => (
           <button
             key={day.date}
             type="button"
-            className={barClass(day.status)}
-            title={`${day.date}: ${STATUS_LABEL[day.status]} (${day.uptime}%)`}
-            aria-label={`${formatDayLabel(day.date)} — ${STATUS_LABEL[day.status]}, ${day.uptime}%`}
+            className={`uptime__bar uptime__bar--${day.status}`}
+            title={`${day.date}: ${dayText(day)}`}
+            aria-label={`${formatDayLabel(day.date)} — ${dayText(day)}`}
             onMouseEnter={() => setHovered(day)}
             onMouseLeave={() => setHovered(null)}
             onFocus={() => setHovered(day)}
@@ -63,10 +78,7 @@ function UptimeTimeline({ days }: { days: UptimeDay[] }) {
           {hovered ? (
             <>
               <strong>{formatDayLabel(hovered.date)}</strong>
-              <span>
-                {STATUS_LABEL[hovered.status]} · {hovered.uptime.toFixed(2)}%
-              </span>
-              {hovered.note ? <em>{hovered.note}</em> : null}
+              <span>{dayText(hovered)}</span>
             </>
           ) : (
             <span className="uptime__tooltip-hint">Užveskite pelę ant dienos</span>
@@ -76,27 +88,49 @@ function UptimeTimeline({ days }: { days: UptimeDay[] }) {
       </div>
 
       <div className="uptime__legend">
-        <span>
-          <i className="uptime__swatch uptime__swatch--operational" /> Veikia
-        </span>
-        <span>
-          <i className="uptime__swatch uptime__swatch--degraded" /> Sutrikimai
-        </span>
-        <span>
-          <i className="uptime__swatch uptime__swatch--outage" /> Neveikia
-        </span>
-        <span>
-          <i className="uptime__swatch uptime__swatch--maintenance" /> Priežiūra
-        </span>
+        {(["operational", "degraded", "outage", "nodata"] as DayStatus[]).map((s) => (
+          <span key={s}>
+            <i className={`uptime__swatch uptime__swatch--${s}`} /> {STATUS_LABEL[s]}
+          </span>
+        ))}
       </div>
     </div>
   );
 }
 
 export default function UptimePage() {
-  const days = useMemo(() => buildUptimeTimeline(90), []);
-  const uptime90 = overallUptime(days);
-  const uptime30 = overallUptime(days.slice(-30));
+  const state = useUptime();
+  const report = state.status === "ready" ? state.report : null;
+  const days = useMemo(() => buildTimeline(report, 90), [report]);
+  const uptime90 = averageUptime(days);
+  const uptime30 = averageUptime(days.slice(-30));
+
+  const botUp = report?.online ?? false;
+  const badge =
+    state.status === "loading"
+      ? { cls: " uptime__badge--loading", text: "Tikrinama…" }
+      : botUp
+        ? { cls: "", text: "Visos sistemos veikia" }
+        : { cls: " uptime__badge--down", text: "Botas šiuo metu neveikia" };
+
+  const services: { name: string; status: DayStatus; text: string; meta: string }[] = [
+    {
+      name: "Discord botas",
+      status: state.status === "loading" ? "nodata" : botUp ? "operational" : "outage",
+      text: state.status === "loading" ? "Tikrinama" : botUp ? "Veikia" : "Neveikia",
+      meta:
+        report?.pingMs != null ? `Ping ~${report.pingMs} ms` : "Ping nežinomas",
+    },
+    {
+      name: "Valdymo panelė",
+      status:
+        state.status === "loading" ? "nodata" : report ? "operational" : "outage",
+      text: state.status === "loading" ? "Tikrinama" : report ? "Veikia" : "Nepasiekiama",
+      meta: report
+        ? `Veikia be perkrovimo ${formatDuration(Date.now() - report.startedAt)}`
+        : "—",
+    },
+  ];
 
   return (
     <div className="uptime">
@@ -106,30 +140,30 @@ export default function UptimePage() {
         <p className="uptime__eyebrow">Statusas</p>
         <div className="uptime__hero-row">
           <div>
-            <h1>Solidus uptime</h1>
+            <h1>Sistemos statusas</h1>
             <p className="uptime__lead">
-              Gyvas boto ir susijusių servisų veikimo vaizdas — timeline,
-              procentai ir pastarieji incidentai.
+              Ar Solidus botas ir valdymo panelė veikia dabar, ir kaip jie veikė
+              per pastarąsias 90 dienų. Duomenys atnaujinami kas minutę.
             </p>
           </div>
-          <div className="uptime__badge">
+          <div className={`uptime__badge${badge.cls}`} role="status">
             <span className="uptime__badge-dot" />
-            Visos sistemos veikia
+            {badge.text}
           </div>
         </div>
 
         <div className="uptime__stats">
           <article className="uptime__stat">
             <p className="uptime__stat-label">90 dienų</p>
-            <p className="uptime__stat-value">{uptime90.toFixed(3)}%</p>
+            <p className="uptime__stat-value">{percent(uptime90)}</p>
           </article>
           <article className="uptime__stat">
             <p className="uptime__stat-label">30 dienų</p>
-            <p className="uptime__stat-value">{uptime30.toFixed(3)}%</p>
+            <p className="uptime__stat-value">{percent(uptime30)}</p>
           </article>
           <article className="uptime__stat">
-            <p className="uptime__stat-label">Tikslas</p>
-            <p className="uptime__stat-value">99,9%</p>
+            <p className="uptime__stat-label">Serverių</p>
+            <p className="uptime__stat-value">{report?.guilds ?? "—"}</p>
           </article>
         </div>
       </div>
@@ -138,32 +172,36 @@ export default function UptimePage() {
         <section className="uptime__section">
           <div className="uptime__section-head">
             <div>
-              <p className="uptime__eyebrow">Timeline</p>
+              <p className="uptime__eyebrow">Istorija</p>
               <h2>Paskutinės 90 dienos</h2>
             </div>
-            <Link to="/pagalba#statusas" className="uptime__back-link">
-              ← Atgal į pagalbą
+            <Link to="/pagalba" className="uptime__back-link">
+              Reikia pagalbos? →
             </Link>
           </div>
           <UptimeTimeline days={days} />
+          {report ? (
+            <p className="uptime__empty" style={{ marginTop: 12 }}>
+              Sekama nuo {formatDateTime(report.trackedSince)}.
+            </p>
+          ) : null}
         </section>
 
         <section className="uptime__section">
-          <p className="uptime__eyebrow">Servisai</p>
+          <p className="uptime__eyebrow">Dabar</p>
           <h2>Komponentų būsena</h2>
           <div className="uptime__services">
-            {SERVICES.map((service) => (
-              <article key={service.id} className="uptime__service">
+            {services.map((service) => (
+              <article key={service.name} className="uptime__service">
                 <div className="uptime__service-top">
                   <span
                     className={`uptime__service-dot uptime__service-dot--${service.status}`}
                   />
                   <strong>{service.name}</strong>
-                  <em>{STATUS_LABEL[service.status]}</em>
+                  <em>{service.text}</em>
                 </div>
                 <div className="uptime__service-meta">
-                  <span>30d · {service.uptime30d}%</span>
-                  <span>~{service.latencyMs} ms</span>
+                  <span>{service.meta}</span>
                 </div>
               </article>
             ))}
@@ -171,27 +209,32 @@ export default function UptimePage() {
         </section>
 
         <section className="uptime__section">
-          <p className="uptime__eyebrow">Istorija</p>
-          <h2>Pastarieji incidentai</h2>
-          <div className="uptime__incidents">
-            {RECENT_INCIDENTS.map((incident) => (
-              <article key={incident.id} className="uptime__incident">
-                <div className="uptime__incident-top">
-                  <strong>{incident.title}</strong>
-                  <span className="uptime__incident-status">
-                    {incident.status === "resolved" ? "Išspręsta" : incident.status}
-                  </span>
-                </div>
-                <p>{incident.summary}</p>
-                <div className="uptime__incident-time">
-                  <span>Pradžia: {formatDateTime(incident.startedAt)}</span>
-                  {incident.resolvedAt ? (
-                    <span>Pabaiga: {formatDateTime(incident.resolvedAt)}</span>
-                  ) : null}
-                </div>
-              </article>
-            ))}
-          </div>
+          <p className="uptime__eyebrow">Sutrikimai</p>
+          <h2>Pastarieji sutrikimai</h2>
+          {report && report.outages.length ? (
+            <div className="uptime__incidents">
+              {report.outages.map((o) => (
+                <article key={o.start} className="uptime__incident">
+                  <div className="uptime__incident-top">
+                    <strong>Botas buvo nepasiekiamas</strong>
+                    <span className="uptime__incident-status">{o.minutes} min.</span>
+                  </div>
+                  <div className="uptime__incident-time">
+                    <span>Pradžia: {formatDateTime(o.start)}</span>
+                    <span>Pabaiga: {formatDateTime(o.end)}</span>
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <p className="uptime__empty">
+              {report
+                ? "Sutrikimų neužfiksuota."
+                : state.status === "loading"
+                  ? "Kraunama…"
+                  : "Istorija nepasiekiama, kol botas neveikia."}
+            </p>
+          )}
         </section>
       </div>
 

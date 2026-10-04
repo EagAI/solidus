@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   ACTIVITY,
@@ -13,6 +14,14 @@ import "./DashboardPage.css";
 
 export default function DashboardPage() {
   const maxSpark = Math.max(...BOT_STATUS.sparkline);
+  const [bot, setBot] = useState<{ online: boolean; tag: string | null; inviteUrl: string | null } | null>(null);
+
+  useEffect(() => {
+    fetch("/api/status")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => setBot(data))
+      .catch(() => setBot(null));
+  }, []);
 
   return (
     <div className="panel-page dash">
@@ -20,6 +29,19 @@ export default function DashboardPage() {
         title="Valdymo skydelis"
         lead="Valdykite Solidus botą ir stebėkite aktyvumą realiu laiku."
       />
+
+      <PanelCard title="Botas">
+        <p style={{ marginBottom: 12, color: "var(--panel-muted)" }}>
+          {bot?.online
+            ? `Prisijungęs kaip ${bot.tag}. Šios panelės nustatymai rašomi į tą patį botą.`
+            : "Botas nepasiekiamas. Paleisk Bot/solidus su npm start ir užpildytu .env."}
+        </p>
+        {bot?.inviteUrl ? (
+          <a className="panel-btn panel-btn--primary" href={bot.inviteUrl} target="_blank" rel="noreferrer">
+            Kviesti į Discord
+          </a>
+        ) : null}
+      </PanelCard>
 
       <div className="dash__stats">
         {DASH_STATS.map((stat) => (

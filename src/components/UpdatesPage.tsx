@@ -29,8 +29,8 @@ export default function UpdatesPage() {
         <p className="updates__eyebrow">Atnaujinimai</p>
         <h1>Kas naujo Solidus?</h1>
         <p className="updates__lead">
-          Trumpa istorija apie paleistas versijas, naujas funkcijas ir
-          pataisymus. Šiuo metu rodomi pavyzdiniai duomenys.
+          Solidus botas ir valdymo panelė auga po truputį nuo 2026 m. birželio.
+          Čia — kiekviena versija ir kas joje pasikeitė.
         </p>
         <div className="updates__hero-actions">
           <Link to="/dokumentacija" className="site-btn site-btn--gradient">

@@ -84,9 +84,9 @@ export default function SiteHeader() {
         </nav>
 
         <div className="site-header__actions">
-          <a href="#login" className="site-btn site-btn--outline">
-            Prisijungti su DISCORD
-          </a>
+          <Link to="/panel" className="site-btn site-btn--outline">
+            Prisijungti su Discord
+          </Link>
         </div>
 
         <button
@@ -125,13 +125,9 @@ export default function SiteHeader() {
           })}
         </nav>
         <div className="site-header__drawer-actions">
-          <a
-            href="#login"
-            className="site-btn site-btn--outline"
-            onClick={closeMenu}
-          >
-            Prisijungti su DISCORD
-          </a>
+          <Link to="/panel" className="site-btn site-btn--outline" onClick={closeMenu}>
+            Prisijungti su Discord
+          </Link>
         </div>
       </div>
     </header>

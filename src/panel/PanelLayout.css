@@ -743,6 +743,37 @@ html.panel-theme-bw *::-webkit-scrollbar-corner {
   color: var(--panel-text);
 }
 
+.panel__nav-parent svg {
+  width: 10px;
+  height: 7px;
+  opacity: 0.7;
+  transition: transform 0.15s ease;
+}
+
+.panel__nav-branch.is-open .panel__nav-parent svg {
+  transform: rotate(180deg);
+}
+
+.panel__nav-parent {
+  width: 100%;
+  cursor: pointer;
+  background: transparent;
+  text-align: left;
+}
+
+.panel__nav-sub {
+  display: grid;
+  gap: 2px;
+  margin: 2px 0 8px 12px;
+  padding-left: 10px;
+  border-left: 1px solid var(--panel-line);
+}
+
+.panel__nav-sublink {
+  font-size: 13px;
+  padding: 8px 10px;
+}
+
 .panel__nav-link.is-active {
   background: var(--panel-active);
   color: var(--panel-text);
@@ -827,4 +858,15 @@ html.panel-theme-bw *::-webkit-scrollbar-corner {
   .panel__main {
     padding: 22px 24px 48px;
   }
+}
+
+.panel__avatar {
+  overflow: hidden;
+}
+
+.panel__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }

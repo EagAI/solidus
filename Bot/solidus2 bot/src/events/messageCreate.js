@@ -1,0 +1,37 @@
+const { handleXp } = require('../services/levels');
+const { handleAntiPing } = require('../services/antiPing');
+const { handleAntiScam } = require('../services/ocr');
+const { handleAntiInviteLink } = require('../services/antiInviteLinks');
+const { handleIdeasChannel } = require('../services/ideas');
+const { handleNegativeLevelMedia } = require('../services/negativeLevelMedia');
+const { handleJailMessage } = require('../services/jail');
+const { handleMediaChannel } = require('../services/mediaChannel');
+const config = require('../config');
+
+module.exports = {
+  name: 'messageCreate',
+  async execute(message) {
+    if (message.author.bot) return;
+    if (!message.guild) return;
+
+    if (await handleJailMessage(message)) return;
+    if (await handleMediaChannel(message)) return;
+
+    if (
+      config.ideasChannelIds.length > 0 &&
+      config.ideasChannelIds.includes(message.channel.id)
+    ) {
+      return handleIdeasChannel(message);
+    }
+
+    if (await handleNegativeLevelMedia(message)) return;
+
+    await handleXp(message);
+    await handleAntiPing(message);
+    await handleAntiInviteLink(message);
+
+    if (message.attachments.size > 0) {
+      await handleAntiScam(message);
+    }
+  },
+};

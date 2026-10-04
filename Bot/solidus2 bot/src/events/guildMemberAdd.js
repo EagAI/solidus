@@ -1,0 +1,73 @@
+const { AttachmentBuilder, ActivityType } = require('discord.js');
+const config = require('../config');
+const { generateWelcomeImage } = require('../utils/welcomeImage');
+const { restoreMemberRolesBackup } = require('../services/memberRolesBackup');
+const { seedRoleSnapshot } = require('../services/memberRoleSnapshot');
+const { logGuildMemberEvent } = require('../services/userStats');
+const { processMemberJoin } = require('../services/inviteTracking');
+const { withAllowedMentions } = require('../utils/allowedMentions');
+const { handleJailMemberRejoin } = require('../services/jail');
+
+module.exports = {
+  name: 'guildMemberAdd',
+  async execute(member) {
+    await processMemberJoin(member);
+    logGuildMemberEvent(member.guild.id, member.id, 'join');
+    await handleJailMemberRejoin(member).catch(() => {});
+    for (const roleId of config.welcomeRoleIds) {
+      try {
+        await member.roles.add(roleId);
+      } catch (err) {
+        console.error('[welcome] Nepavyko priskirti rolės', roleId, err.message);
+      }
+    }
+
+    if (config.blacklistRoleId) {
+      const { isInLeaverList } = require('../services/guildLeavers');
+      if (isInLeaverList(member.guild.id, member.id)) {
+        try {
+          await member.roles.add(config.blacklistRoleId);
+        } catch (e) {
+          console.error('[blacklist-role] Nepavyko priskirti:', e?.message || e);
+        }
+      }
+    }
+
+    seedRoleSnapshot(member);
+
+    const channel = member.guild.channels.cache.get(config.welcomeChannelId);
+    if (channel) {
+      try {
+        const buffer = await generateWelcomeImage(member);
+        const attachment = new AttachmentBuilder(buffer, { name: 'welcome.png' });
+        await channel.send({ files: [attachment] });
+      } catch (err) {
+        console.error('[welcome] Image generation failed:', err?.message || err, err?.stack);
+        await channel.send(
+          withAllowedMentions({ content: `Sveiki atvykę į serverį, ${member}! 🎉` }, { pingUsers: true })
+        );
+      }
+    }
+
+    member.client.user.setPresence({
+      activities: [{ name: `Iš viso mūsų: ${member.guild.memberCount}`, type: ActivityType.Watching }],
+      status: 'online',
+    });
+
+    void restoreMemberRolesBackup(member)
+      .catch(e => console.error('[roles-backup] restore:', e?.message || e))
+      .then(async () => {
+        try {
+          const { assignLevelRoles, getLevelFromXp } = require('../services/levels');
+          const db = require('../db');
+          const rec = db
+            .prepare('SELECT xp FROM levels WHERE user_id = ? AND guild_id = ?')
+            .get(member.id, member.guild.id);
+          const fresh = await member.guild.members.fetch(member.id).catch(() => member);
+          await assignLevelRoles(fresh, getLevelFromXp(rec?.xp ?? 0));
+        } catch (e) {
+          console.warn('[levels] rolių atkūrimas po grįžimo:', e?.message || e);
+        }
+      });
+  },
+};

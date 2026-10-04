@@ -1,166 +1,90 @@
-export type DayStatus = "operational" | "degraded" | "outage" | "maintenance";
+import { useEffect, useState } from "react";
+
+export type DayStatus = "operational" | "degraded" | "outage" | "nodata";
 
 export type UptimeDay = {
   date: string; // YYYY-MM-DD
   status: DayStatus;
-  uptime: number; // 0-100
-  note?: string;
+  /** null = the bot was not tracking yet that day */
+  uptime: number | null;
 };
 
-export type ServiceStatus = {
-  id: string;
-  name: string;
-  status: DayStatus;
-  uptime30d: number;
-  latencyMs: number;
+export type Outage = { start: number; end: number; minutes: number };
+
+/** Shape of GET /api/uptime (Bot/solidus/src/modules/uptime.js). */
+export type UptimeReport = {
+  online: boolean;
+  pingMs: number | null;
+  guilds: number | null;
+  startedAt: number;
+  trackedSince: number;
+  days: { date: string; uptime: number | null }[];
+  outages: Outage[];
 };
 
-export type Incident = {
-  id: string;
-  title: string;
-  status: "resolved" | "monitoring" | "investigating";
-  startedAt: string;
-  resolvedAt?: string;
-  summary: string;
+export const STATUS_LABEL: Record<DayStatus, string> = {
+  operational: "Veikė",
+  degraded: "Su pertrūkiais",
+  outage: "Neveikė",
+  nodata: "Nėra duomenų",
 };
 
-const DAY_MS = 24 * 60 * 60 * 1000;
-
-function formatDate(d: Date) {
-  return d.toISOString().slice(0, 10);
+function statusFor(uptime: number | null): DayStatus {
+  if (uptime === null) return "nodata";
+  if (uptime >= 99.5) return "operational";
+  if (uptime >= 95) return "degraded";
+  return "outage";
 }
 
-/** Deterministic pseudo-random from date string */
-function seedFromDate(date: string) {
-  let h = 0;
-  for (let i = 0; i < date.length; i++) h = (h * 31 + date.charCodeAt(i)) >>> 0;
-  return h;
-}
-
-function statusForSeed(seed: number): { status: DayStatus; uptime: number; note?: string } {
-  const roll = seed % 100;
-  if (roll < 2) {
-    return {
-      status: "outage",
-      uptime: 92 + (seed % 5),
-      note: "Trumpas API sutrikimas",
-    };
-  }
-  if (roll < 6) {
-    return {
-      status: "degraded",
-      uptime: 97 + (seed % 2),
-      note: "Padidėjęs atsako laikas",
-    };
-  }
-  if (roll < 9) {
-    return {
-      status: "maintenance",
-      uptime: 99.2,
-      note: "Planiniai atnaujinimai",
-    };
-  }
-  return {
-    status: "operational",
-    uptime: 99.9 + ((seed % 10) / 1000),
-  };
-}
-
-export function buildUptimeTimeline(days = 90): UptimeDay[] {
+/** Last `count` days ending today; days the bot wasn't tracking yet are "nodata". */
+export function buildTimeline(report: UptimeReport | null, count = 90): UptimeDay[] {
+  const byDate = new Map(report?.days.map((d) => [d.date, d.uptime]) ?? []);
   const today = new Date();
-  today.setHours(12, 0, 0, 0);
   const result: UptimeDay[] = [];
-
-  for (let i = days - 1; i >= 0; i--) {
-    const d = new Date(today.getTime() - i * DAY_MS);
-    const date = formatDate(d);
-    const seeded = statusForSeed(seedFromDate(date));
-    result.push({ date, ...seeded });
+  for (let i = count - 1; i >= 0; i--) {
+    const d = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() - i));
+    const date = d.toISOString().slice(0, 10);
+    const uptime = byDate.get(date) ?? null;
+    result.push({ date, uptime, status: statusFor(uptime) });
   }
-
-  // Keep recent few days mostly healthy for a realistic "now" feel
-  for (let i = result.length - 5; i < result.length; i++) {
-    if (i < 0) continue;
-    result[i] = {
-      ...result[i],
-      status: "operational",
-      uptime: 100,
-      note: undefined,
-    };
-  }
-
   return result;
 }
 
-export function overallUptime(days: UptimeDay[]): number {
-  if (!days.length) return 100;
-  const sum = days.reduce((acc, d) => acc + d.uptime, 0);
-  return Math.round((sum / days.length) * 1000) / 1000;
+/** Average over days that have data; null when nothing was tracked yet. */
+export function averageUptime(days: UptimeDay[]): number | null {
+  const tracked = days.filter((d) => d.uptime !== null);
+  if (!tracked.length) return null;
+  const sum = tracked.reduce((acc, d) => acc + (d.uptime ?? 0), 0);
+  return Math.round((sum / tracked.length) * 100) / 100;
 }
 
-export const SERVICES: ServiceStatus[] = [
-  {
-    id: "bot-core",
-    name: "Bot core",
-    status: "operational",
-    uptime30d: 99.98,
-    latencyMs: 42,
-  },
-  {
-    id: "slash",
-    name: "Slash komandos",
-    status: "operational",
-    uptime30d: 99.95,
-    latencyMs: 68,
-  },
-  {
-    id: "automod",
-    name: "Automod / Apsauga",
-    status: "operational",
-    uptime30d: 99.97,
-    latencyMs: 55,
-  },
-  {
-    id: "dashboard",
-    name: "Dashboard",
-    status: "operational",
-    uptime30d: 99.91,
-    latencyMs: 120,
-  },
-];
+export type UptimeState =
+  | { status: "loading" }
+  /** The panel API itself didn't answer: bot process is down. */
+  | { status: "unreachable" }
+  | { status: "ready"; report: UptimeReport };
 
-export const RECENT_INCIDENTS: Incident[] = [
-  {
-    id: "inc-2401",
-    title: "Padidėjęs Discord gateway atsako laikas",
-    status: "resolved",
-    startedAt: "2026-07-12T14:20:00Z",
-    resolvedAt: "2026-07-12T15:05:00Z",
-    summary:
-      "Laikinai lėtesnės slash komandos dėl Discord API apkrovos. Automatiškai atsistatė.",
-  },
-  {
-    id: "inc-2318",
-    title: "Planiniai atnaujinimai",
-    status: "resolved",
-    startedAt: "2026-06-28T02:00:00Z",
-    resolvedAt: "2026-06-28T02:35:00Z",
-    summary: "Deploy’intas naujas automod filtras. Trumpas reconnect’as (~2 min).",
-  },
-  {
-    id: "inc-2290",
-    title: "Dalies regionų jungčių sutrikimas",
-    status: "resolved",
-    startedAt: "2026-05-19T09:10:00Z",
-    resolvedAt: "2026-05-19T10:40:00Z",
-    summary:
-      "EU regiono mazgas buvo nepasiekiamas. Trafikas nukreiptas, servisas atkurtas.",
-  },
-];
+/** Polls /api/uptime every 60 s while the page is open. */
+export function useUptime(): UptimeState {
+  const [state, setState] = useState<UptimeState>({ status: "loading" });
 
-export const STATUS_LABEL: Record<DayStatus, string> = {
-  operational: "Veikia",
-  degraded: "Sutrikimai",
-  outage: "Neveikia",
-  maintenance: "Priežiūra",
-};
+  useEffect(() => {
+    let cancelled = false;
+    const load = () =>
+      fetch("/api/uptime")
+        .then((res) => {
+          if (!res.ok) throw new Error(String(res.status));
+          return res.json() as Promise<UptimeReport>;
+        })
+        .then((report) => !cancelled && setState({ status: "ready", report }))
+        .catch(() => !cancelled && setState({ status: "unreachable" }));
+    void load();
+    const timer = window.setInterval(load, 60_000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, []);
+
+  return state;
+}

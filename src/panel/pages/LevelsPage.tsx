@@ -12,6 +12,7 @@ import {
   PanelToggle,
 } from "../components/ui";
 import "./LevelsPage.css";
+import LevelsLook from "./LevelsLook";
 
 type Milestone = {
   id: string;
@@ -114,6 +115,8 @@ export default function LevelsPage() {
         title="Lygiai ir XP"
         lead="XP sistema, lygio milestone'ai ir automatinės rolės pasiekus lygį."
       />
+
+      <LevelsLook />
 
       <div className="panel-grid-2">
         <PanelCard title="XP sistema">

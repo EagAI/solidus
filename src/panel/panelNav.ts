@@ -3,6 +3,7 @@ export type PanelNavItem = {
   to: string;
   end?: boolean;
   badge?: string;
+  children?: PanelNavItem[];
 };
 
 export type PanelNavGroup = {
@@ -14,27 +15,36 @@ export type PanelNavGroup = {
 export const PANEL_NAV: PanelNavGroup[] = [
   {
     id: "home",
-    items: [{ label: "Pagrindinis", to: "/panel", end: true }],
+    items: [
+      { label: "Serveriai", to: "/panel", end: true },
+      { label: "Pagrindinis", to: "/panel/valdymas" },
+    ],
   },
   {
-    id: "valdymas",
-    label: "VALDYMAS",
+    id: "nariai",
+    label: "NARIAI",
     items: [
-      { label: "Komandos", to: "/panel/komandos" },
-      { label: "Automatika", to: "/panel/automatika" },
-      { label: "Rolių valdymas", to: "/panel/roles" },
-      { label: "Įspėjimai", to: "/panel/ispejimai" },
-      { label: "Serverio nustatymai", to: "/panel/nustatymai" },
+      {
+        label: "Prisijungimas",
+        to: "/panel/nariai",
+        children: [
+          { label: "Entrance", to: "/panel/nariai/entrance" },
+          { label: "Goodbye", to: "/panel/nariai/goodbye" },
+          { label: "Auto-rolė", to: "/panel/nariai/autorole" },
+        ],
+      },
+      { label: "Rolės", to: "/panel/roles" },
     ],
   },
   {
     id: "moderavimas",
     label: "MODERAVIMAS",
     items: [
-      { label: "Pranešimų filtrai", to: "/panel/filtrai" },
-      { label: "Žodžių juodasis sąrašas", to: "/panel/blacklist" },
-      { label: "Anti-raid apsauga", to: "/panel/anti-raid" },
-      { label: "Įrašų stebėjimas", to: "/panel/logai" },
+      { label: "Įspėjimai", to: "/panel/ispejimai" },
+      { label: "Filtrai", to: "/panel/filtrai" },
+      { label: "Juodasis sąrašas", to: "/panel/blacklist" },
+      { label: "Anti-raid", to: "/panel/anti-raid" },
+      { label: "Logai", to: "/panel/logai" },
     ],
   },
   {
@@ -47,14 +57,35 @@ export const PANEL_NAV: PanelNavGroup[] = [
     ],
   },
   {
+    id: "bendruomene",
+    label: "BENDRUOMENĖ",
+    items: [
+      {
+        label: "Tiketai",
+        to: "/panel/tiketai",
+        children: [
+          { label: "Nustatymai", to: "/panel/tiketai/nustatymai" },
+          { label: "Istorija", to: "/panel/tiketai/istorija" },
+        ],
+      },
+      { label: "Giveaway", to: "/panel/giveaway" },
+      { label: "Apklausos", to: "/panel/apklausos" },
+      { label: "Balso kanalai", to: "/panel/voice" },
+    ],
+  },
+  {
     id: "irankiai",
     label: "ĮRANKIAI",
     items: [
-      { label: "Giveaway", to: "/panel/giveaway" },
-      { label: "Apklausos", to: "/panel/apklausos", badge: "Nauja" },
-      { label: "Embed builder", to: "/panel/embed", badge: "Nauja" },
-      { label: "Balso kanalai", to: "/panel/voice" },
+      { label: "Komandos", to: "/panel/komandos" },
+      { label: "Embed", to: "/panel/embed" },
+      { label: "Extras", to: "/panel/extras" },
     ],
+  },
+  {
+    id: "nustatymai",
+    label: "NUSTATYMAI",
+    items: [{ label: "Serveris", to: "/panel/nustatymai" }],
   },
 ];
 

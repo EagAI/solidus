@@ -157,6 +157,8 @@
 }
 
 .hero__visual {
+  --mx: 0;
+  --my: 0;
   position: relative;
   width: 100%;
   aspect-ratio: 1.35 / 1;
@@ -164,22 +166,53 @@
   margin: 0 auto;
 }
 
-.hero__wave,
+.hero__particles,
+.hero__halo,
 .hero__subtle,
 .hero__wordmark,
+.hero__floor,
 .hero__robot {
   position: absolute;
   pointer-events: none;
   user-select: none;
 }
 
-.hero__wave {
-  left: 4%;
-  top: 38%;
-  width: 92%;
-  height: 38%;
-  object-fit: cover;
-  opacity: 0.95;
+.hero__particles {
+  inset: -6% -4%;
+  width: 108%;
+  height: 112%;
+  z-index: 1;
+}
+
+.hero__halo {
+  left: 50%;
+  top: 46%;
+  width: min(70%, 640px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(110, 120, 255, 0.32) 0%,
+    rgba(184, 73, 255, 0.16) 38%,
+    rgba(73, 174, 254, 0) 68%
+  );
+  transform: translate(-50%, -50%)
+    translate(calc(var(--mx) * -14px), calc(var(--my) * -10px))
+    scale(0.9);
+  opacity: 0.55;
+  z-index: 1;
+  will-change: transform, opacity;
+  animation: hero-halo-pulse 6s ease-in-out infinite;
+}
+
+@keyframes hero-halo-pulse {
+  0%,
+  100% {
+    scale: 1;
+  }
+  50% {
+    scale: 1.08;
+  }
 }
 
 .hero__subtle {
@@ -188,24 +221,223 @@
   width: 96%;
   height: 62%;
   object-fit: cover;
+  transform: translate(calc(var(--mx) * -18px), calc(var(--my) * -6px));
+  /* Bottom layer, no blend mode: blending an animated GIF with layers that
+     repaint on their own schedule made it flicker while the mouse was idle.
+     Glow + particles sit above it, so its black box never cuts through them. */
+  z-index: 0;
+  animation: hero-fade-in 1.6s ease-out 0.2s backwards;
+}
+
+@keyframes hero-fade-in {
+  from {
+    opacity: 0;
+  }
 }
 
 .hero__wordmark {
   left: 3%;
   top: 38%;
   width: 94%;
-  height: auto;
-  object-fit: contain;
+  aspect-ratio: 1199 / 156;
+  z-index: 1;
 }
+
+.hero__letter {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform: translate(
+    calc(var(--mx) * var(--k) * -0.8%),
+    calc(var(--my) * -3%)
+  );
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  animation: hero-letter-in 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+  animation-delay: calc(0.25s + var(--ak) * 0.35s);
+}
+
+@keyframes hero-letter-in {
+  from {
+    opacity: 0;
+    translate: calc(var(--k) * 30%) 0;
+    scale: 1.2;
+  }
+}
+
+/* ——— Robot: stands still; only the eyes are alive ——— */
 
 .hero__robot {
   left: 50%;
   top: 6%;
   width: min(72%, 420px);
-  height: auto;
   transform: translateX(-50%);
-  object-fit: contain;
   z-index: 2;
+  animation: hero-robot-in 1.2s cubic-bezier(0.2, 0.9, 0.25, 1.15) 0.15s
+    backwards;
+}
+
+@keyframes hero-robot-in {
+  from {
+    opacity: 0;
+    translate: 0 -18%;
+    scale: 0.85;
+  }
+}
+
+/* Box with exactly the robot image's footprint; eyes + floor are % of it.
+   robot.png is cropped tight and the cape widens its left side, so the body
+   axis (head/feet) sits at ~61% of the image. 88% width + top margin restore
+   the old size and feet position; left pulls the body axis to the center. */
+.hero__robot-art {
+  position: relative;
+  left: -9.5%;
+  width: 88%;
+  margin: 6% auto 0;
+  isolation: isolate;
+}
+
+.hero__robot-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 0 18px rgba(110, 120, 255, 0.35));
+}
+
+.hero__floor {
+  left: 61%;
+  bottom: -3%;
+  width: 62%;
+  height: 11%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse,
+    rgba(73, 174, 254, 0.55) 0%,
+    rgba(184, 73, 255, 0.2) 45%,
+    transparent 72%
+  );
+  transform: translateX(-50%);
+  opacity: 0.9;
+  z-index: -1;
+  animation: hero-floor-breathe 6s ease-in-out infinite;
+}
+
+@keyframes hero-floor-breathe {
+  0%,
+  100% {
+    scale: 1;
+  }
+  50% {
+    scale: 0.82;
+  }
+}
+
+/* ——— Eyes (positions measured on robot.png, 1254×1254) ——— */
+
+.hero__eyes {
+  --ex: 0px;
+  --ey: 0px;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transform: translate(var(--ex), var(--ey));
+}
+
+.hero__eye {
+  position: absolute;
+  top: 23.3%;
+  width: 8.85%;
+  height: 4.6%;
+  overflow: visible;
+  transform-origin: 50% 75%;
+  filter: drop-shadow(0 0 5px rgba(64, 214, 255, 0.85));
+  transition: transform 0.35s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+
+.hero__eye--l {
+  left: 49.28%;
+}
+
+.hero__eye--r {
+  left: 65.87%;
+}
+
+/* Mouse idle for a while: half-closed. */
+.hero__eyes.is-sleepy .hero__eye {
+  transform: scaleY(0.4);
+  transition-duration: 0.8s;
+  transition-timing-function: ease-in-out;
+}
+
+/* Cursor over the robot: bigger, bouncier smile. */
+.hero__eyes.is-happy .hero__eye {
+  transform: translateY(-8%) scale(1.18);
+}
+
+/* Last so a blink wins over every other stage. */
+.hero__eyes.is-blinking .hero__eye {
+  transform: scaleY(0.08);
+  transition: transform 0.07s ease-in;
+}
+
+.hero__title,
+.hero__desc,
+.hero__actions {
+  animation: hero-copy-in 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+}
+
+.hero__title {
+  animation-delay: 0.55s;
+}
+
+.hero__desc {
+  animation-delay: 0.7s;
+}
+
+.hero__actions {
+  animation-delay: 0.85s;
+}
+
+@keyframes hero-copy-in {
+  from {
+    opacity: 0;
+    translate: 0 24px;
+  }
+}
+
+/* ——— Scroll reveal ——— */
+
+.reveal {
+  opacity: 0;
+  translate: 0 48px;
+  transition:
+    opacity 0.9s ease,
+    translate 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  translate: 0 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__visual * {
+    animation: none !important;
+  }
+
+  .hero__title,
+  .hero__desc,
+  .hero__actions {
+    animation: none;
+  }
+
+  .reveal {
+    opacity: 1;
+    translate: none;
+    transition: none;
+  }
 }
 
 .hero__copy {
@@ -373,7 +605,25 @@
 }
 
 .features__tab-short {
-  display: inline;
+  display: none;
+}
+
+/* Phones: icon-only tabs, all six in one row — no sideways scrolling. */
+@media (max-width: 699px) {
+  .features__tabs {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 6px;
+    overflow: visible;
+    padding-bottom: 0;
+  }
+
+  .features__tab {
+    min-width: 0;
+    min-height: 44px;
+    padding: 0;
+    border-radius: 14px;
+  }
 }
 
 .features__tab--active {
@@ -529,6 +779,119 @@
 
   .features__body p + p {
     margin-top: 24px;
+  }
+}
+
+/* ——— Why Solidus (feature grid) ——— */
+
+.why,
+.steps {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 24px clamp(16px, 4vw, 48px) 56px;
+}
+
+.why__kicker {
+  font-family: "Anta", sans-serif;
+  font-size: 14px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: #4fabff;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.why__title,
+.steps__title {
+  font-family: "Anta", sans-serif;
+  font-size: clamp(26px, 4.5vw, 40px);
+  font-weight: 400;
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.why__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr));
+  gap: 14px;
+}
+
+.why__card {
+  padding: 20px 20px 22px;
+  border-radius: 20px;
+  border: 1px solid transparent;
+  background:
+    linear-gradient(#07060f, #07060f) padding-box,
+    linear-gradient(160deg, rgba(74, 175, 254, 0.55), rgba(184, 73, 255, 0.35)) border-box;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.why__card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(76, 174, 255, 0.12);
+}
+
+.why__card h3 {
+  font-family: "Anta", sans-serif;
+  font-size: 17px;
+  font-weight: 400;
+  margin-bottom: 8px;
+}
+
+.why__card p {
+  font-size: 15px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* ——— Getting started ——— */
+
+.steps__list {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 14px;
+  counter-reset: none;
+}
+
+.steps__item {
+  position: relative;
+  padding: 22px 20px 24px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(76, 174, 255, 0.2);
+}
+
+.steps__num {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 14px;
+  border-radius: 50%;
+  font-family: "Anta", sans-serif;
+  font-size: 18px;
+  background: linear-gradient(90deg, #49aefe 0%, #b849ff 100%);
+}
+
+.steps__item h3 {
+  font-family: "Anta", sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  margin-bottom: 6px;
+}
+
+.steps__item p {
+  font-size: 15px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .why__card {
+    transition: none;
   }
 }
 

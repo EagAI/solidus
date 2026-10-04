@@ -1,0 +1,21 @@
+{
+  "name": "solidus2",
+  "version": "1.0.0",
+  "description": "Solidus2 Discord bot",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "deploy": "node index.js deploy"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@napi-rs/canvas": "^0.1.99",
+    "better-sqlite3": "^11.9.1",
+    "discord.js": "^14.18.0",
+    "dotenv": "^16.5.0",
+    "fast-xml-parser": "^5.2.3",
+    "tesseract.js": "^7.0.0"
+  }
+}

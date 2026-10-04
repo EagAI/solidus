@@ -1,0 +1,140 @@
+.ticket-history {
+  display: grid;
+  gap: 16px;
+}
+
+.ticket-history__list,
+.discord-log {
+  background: var(--panel-card);
+  border: 1px solid var(--panel-line);
+  border-radius: 18px;
+  padding: 14px;
+}
+
+.ticket-history__filters {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.ticket-history__filters button,
+.ticket-history__item {
+  border: 1px solid var(--panel-line);
+  background: var(--panel-surface);
+  color: var(--panel-text);
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.ticket-history__filters button {
+  padding: 6px 10px;
+  font: inherit;
+  font-size: 13px;
+}
+
+.ticket-history__filters button.is-active,
+.ticket-history__item.is-active {
+  background: var(--panel-active);
+  border-color: var(--panel-active-border);
+}
+
+.ticket-history__item {
+  display: grid;
+  width: 100%;
+  text-align: left;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+
+.ticket-history__item span,
+.ticket-history__empty,
+.discord-log__head span,
+.discord-log__meta time {
+  color: var(--panel-muted);
+  font-size: 12px;
+}
+
+.discord-log {
+  background: #313338;
+  color: #dbdee1;
+  min-height: 420px;
+}
+
+.discord-log__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.discord-log__head strong {
+  display: block;
+  color: #fff;
+}
+
+.discord-log__head a {
+  color: #00a8fc;
+}
+
+.discord-log__msg {
+  display: flex;
+  gap: 12px;
+  padding: 8px 4px;
+}
+
+.discord-log__msg:hover {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+}
+
+.discord-log__avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  background: #5865f2;
+  color: #fff;
+  font-weight: 700;
+}
+
+.discord-log__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.discord-log__meta strong {
+  color: #fff;
+  font-size: 15px;
+}
+
+.discord-log__bot {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  padding: 1px 4px;
+  border-radius: 3px;
+  background: #5865f2;
+  color: #fff;
+}
+
+.discord-log__msg p {
+  white-space: pre-wrap;
+  line-height: 1.375;
+}
+
+.discord-log .ticket-history__empty {
+  color: #949ba4;
+}
+
+@media (min-width: 900px) {
+  .ticket-history {
+    grid-template-columns: 280px 1fr;
+    align-items: start;
+  }
+}

@@ -1,10 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
-  solidusWordmark,
-  robot,
-  wave,
-  subtleWave,
   aura,
   discordIcon,
   arrowIcon,
@@ -16,6 +12,7 @@ import {
   saugumasIcon,
   tinkinimasIcon,
 } from "../assets";
+import HeroScene from "./HeroScene";
 import SiteFooter from "./SiteFooter";
 import SiteHeader from "./SiteHeader";
 import "./HomePage.css";
@@ -48,40 +45,40 @@ const FEATURE_TABS: FeatureTab[] = [
     icon: moderavimasIcon,
     iconW: 26,
     iconH: 26,
-    title: "Lorem ipsum dolor",
+    title: "Moderavimas be chaoso",
     paragraphs: [
-      "Sed egestas vulputate sem, malesuada luctus ex egestas vitae. Aliquam pulvinar lacus vitae purus dapibus, ut dictum nunc pharetra. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed sit amet efficitur nibh, vitae aliquam sapien. Nullam eu venenatis nibh. Praesent mattis eget sapien tincidunt accumsan.",
-      "Cras tellus felis, lacinia ut maximus quis, faucibus sit amet risus. Nullam blandit augue eget imperdiet efficitur. Vivamus sed ante dictum, laoreet libero ac, faucibus justo.",
+      "Užbaninti, išmesti ar nutildyti narį užtenka vienos komandos — /admin timeout supranta 30min, 2h ar 1d. /admin purge vienu kartu išvalo iki 100 žinučių, o /slap su GIF'u ir XP bauda primena įkyruoliui taisykles.",
+      "Kiekviena redaguota ir ištrinta žinutė lieka logų kanale, todėl moderatoriai visada mato, kas iš tikrųjų buvo parašyta.",
     ],
-    highlight: "natoque penatibus",
+    highlight: "vienos komandos",
   },
   {
     id: "irankiai",
-    label: "ĮRANKIAI",
-    shortLabel: "Įrankiai",
-    icon: irankiaiIcon,
-    iconW: 26,
-    iconH: 26,
-    title: "Įrankiai serveriui",
-    paragraphs: [
-      "Greiti ir patogūs įrankiai, kurie padeda valdyti roles, kanalus ir narius be triukšmo. Sukurkite šablonus, paleiskite veiksmus vienu mygtuku ir sutaupykite laiką kasdieniam darbui.",
-      "Viskas veikia tiesiogiai Discord aplinkoje — jokių papildomų skydelių ar sudėtingų nustatymų, tik aiškūs veiksmai kai jų reikia.",
-    ],
-    highlight: "vienu mygtuku",
-  },
-  {
-    id: "ekonomika",
-    label: "EKONOMIKA",
-    shortLabel: "Eko",
+    label: "LYGIAI",
+    shortLabel: "Lygiai",
     icon: ekonomikaIcon,
     iconW: 26,
     iconH: 26,
-    title: "Ekonomikos sistema",
+    title: "Lygiai ir XP",
     paragraphs: [
-      "Sukurkite serverio ekonomiką su balansu, prekėmis ir apdovanojimais. Skatinkite aktyvumą, prekybą tarp narių ir ilgalaikį įsitraukimą be rankinio darbo.",
-      "Nustatykite pajamas, baudas ir parduotuvę pagal savo bendruomenės ritmą — sistema prisitaiko prie jūsų taisyklių.",
+      "Nariai renka XP už bendravimą ir kyla lygiais. /lygis parodo gražią lygio kortelę, o /lyderiai — top 15 serverio narių kaip vieną grafiką, kurią norisi pasidalinti.",
+      "Pasiekus lygį, botas pats suteikia rolę ir paskelbia pakilimą kanale — be jokio rankinio darbo.",
     ],
-    highlight: "apdovanojimais",
+    highlight: "top 15",
+  },
+  {
+    id: "ekonomika",
+    label: "TIKETAI",
+    shortLabel: "Tiketai",
+    icon: irankiaiIcon,
+    iconW: 26,
+    iconH: 26,
+    title: "Tiketai ir giveaway",
+    paragraphs: [
+      "/ticket išsiunčia skydelį į kanalą: narys pasirenka temą — pagalba, pranešimas ar klausimas — ir botas sukuria privatų kanalą su jūsų komanda. Visą tiketų istoriją matai panelėje.",
+      "Giveaway sukuriamas per formą su /giveaway create, o baigti anksčiau ar perrinkti laimėtojus galima viena komanda.",
+    ],
+    highlight: "privatų kanalą",
   },
   {
     id: "automatika",
@@ -90,12 +87,12 @@ const FEATURE_TABS: FeatureTab[] = [
     icon: automatikaIcon,
     iconW: 26,
     iconH: 26,
-    title: "Automatikos srautai",
+    title: "Serveris, kuris tvarkosi pats",
     paragraphs: [
-      "Automatizuokite pasveikinimus, roles, priminimus ir reakcijas. Paleiskite srautus pagal įvykius ir palikite rutiną botui, o sau — svarbiausius sprendimus.",
-      "Lanksčios sąlygos ir aiškūs trigeriai leidžia sudėlioti procesus taip, kaip veikia jūsų serveris.",
+      "Naujas narys gauna pasveikinimą su baneriu ar kortele, autorolę ir patvirtinimo mygtuką. Išėjus — atsisveikinimo žinutė.",
+      "Prisijungus prie voice „hub“ kanalo, botas sukuria asmeninį kambarį ir jį ištrina, kai visi išeina. Naujas YouTube vaizdo įrašas ar live paskelbiamas automatiškai.",
     ],
-    highlight: "Pagal įvykius",
+    highlight: "patvirtinimo mygtuką",
   },
   {
     id: "apsauga",
@@ -104,33 +101,84 @@ const FEATURE_TABS: FeatureTab[] = [
     icon: saugumasIcon,
     iconW: 26,
     iconH: 26,
-    title: "Apsaugos sluoksnis",
+    title: "Apsauga nuo sukčių",
     paragraphs: [
-      "Apsaugokite bendruomenę nuo spamo, raidų ir kenksmingų nuorodų. Filtrai, limitai ir greiti veiksmai padeda išlaikyti tvarką dar prieš problemoms išaugant.",
-      "Matykite incidentus, reaguokite greitai ir laikykite serverį saugų be nuolatinės priežiūros.",
+      "Solidus skaito tekstą net nuotraukose ir atpažįsta sukčių schemas — netikrus giveaway ar „nemokamą Nitro“. Siuntėjas iškart gauna timeout, o moderatoriai — pranešimą su mygtukais užbaninti ar paleisti.",
+      "Svetimų serverių pakvietimai ištrinami automatiškai, o pasirinktuose kanaluose galima leisti tik nuotraukas.",
     ],
-    highlight: "kenksmingų nuorodų",
+    highlight: "net nuotraukose",
   },
   {
     id: "tinkinimas",
-    label: "TINKINIMAS",
-    shortLabel: "Tinkinimas",
+    label: "PANELĖ",
+    shortLabel: "Panelė",
     icon: tinkinimasIcon,
     iconW: 26,
     iconH: 26,
-    title: "Pilnas tinkinimas",
+    title: "Viskas valdoma svetainėje",
     paragraphs: [
-      "Derinkite komandas, žinutes ir elgesį pagal savo stilių. Nustatykite kalbą, teises ir išvaizdą taip, kad Solidus jaustųsi natūralia jūsų serverio dalimi.",
-      "Keiskite detales bet kada — be perkrovimų ir be painių konfigūracijų.",
+      "Prisijunk su Discord ir matysi visus serverius, kuriuos gali valdyti. Įjunk ar išjunk modulius, pasirink kanalus ir roles — be komandų mokymosi.",
+      "Kiekvienas serveris turi savo nustatymus, o panelę mato tik tie, kas tą serverį valdo Discord'e.",
     ],
-    highlight: "natūralia",
+    highlight: "be komandų mokymosi",
   },
 ];
 
+/** Honest facts instead of made-up audience numbers. */
 const STATS = [
-  { value: "100K+", label: "SERVERIŲ" },
-  { value: "500K+", label: "NAUDOTOJŲ" },
-  { value: "99,9%", label: "VEIKIMO LAIKAS" },
+  { value: "7", label: "SLASH KOMANDOS" },
+  { value: "8", label: "MODULIAI PANELĖJE" },
+  { value: "100%", label: "LIETUVIŠKAI" },
+] as const;
+
+const HIGHLIGHTS = [
+  {
+    title: "Lietuviškai iš esmės",
+    text: "Komandos, žinutės ir panelė parašytos lietuviškai — ne išverstos mašina.",
+  },
+  {
+    title: "Anti-scam nuotraukose",
+    text: "Atpažįsta sukčių tekstą paveikslėliuose, kur įprasti filtrai nemato.",
+  },
+  {
+    title: "Lygių kortelės",
+    text: "/lygis ir /lyderiai piešia grafikas su tavo serverio spalvomis.",
+  },
+  {
+    title: "Tiketai su istorija",
+    text: "Privatūs pagalbos kanalai, o visi pokalbiai lieka panelėje.",
+  },
+  {
+    title: "Giveaway per formą",
+    text: "Prizas, trukmė ir laimėtojų skaičius — be sudėtingų argumentų.",
+  },
+  {
+    title: "Asmeniniai voice kambariai",
+    text: "Kiekvienas gauna savo kambarį, kuris dingsta, kai visi išeina.",
+  },
+  {
+    title: "YouTube pranešimai",
+    text: "Naujas vaizdo įrašas ar live paskelbiamas tavo kanale automatiškai.",
+  },
+  {
+    title: "Žinučių logai",
+    text: "Redaguotos ir ištrintos žinutės išsaugomos moderatoriams.",
+  },
+] as const;
+
+const STEPS = [
+  {
+    title: "Prisijunk su Discord",
+    text: "Atidaryk panelę — matysi visus serverius, kuriuose esi administratorius.",
+  },
+  {
+    title: "Pakviesk Solidus",
+    text: "Prie norimo serverio spausk „Pakviesti“. Komandos atsiras iš karto.",
+  },
+  {
+    title: "Įsijunk, ko reikia",
+    text: "Panelėje pasirink modulius, kanalus ir roles. Pakeitimai veikia akimirksniu.",
+  },
 ] as const;
 
 const SVG_W = 1198;
@@ -424,6 +472,27 @@ export default function HomePage() {
   }, [target.left, target.width]);
 
   useEffect(() => {
+    const els = document.querySelectorAll<HTMLElement>(".home .reveal");
+    if (typeof IntersectionObserver === "undefined") {
+      els.forEach((el) => el.classList.add("is-visible"));
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          entry.target.classList.add("is-visible");
+          io.unobserve(entry.target);
+        }
+      },
+      // Any part entering (minus a 10% bottom band) — works for tall sections too.
+      { threshold: 0, rootMargin: "0px 0px -10% 0px" },
+    );
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
+
+  useEffect(() => {
     if (!hash) return;
     const id = hash.replace("#", "");
     const el = document.getElementById(id);
@@ -439,26 +508,21 @@ export default function HomePage() {
       <SiteHeader />
 
       <section className="hero">
-        <div className="hero__visual" aria-hidden="true">
-          <img className="hero__wave" src={wave} alt="" />
-          <img className="hero__subtle" src={subtleWave} alt="" />
-          <img className="hero__wordmark" src={solidusWordmark} alt="" />
-          <img className="hero__robot" src={robot} alt="" />
-        </div>
+        <HeroScene />
 
         <div className="hero__copy">
           <h1 className="hero__title">
-            Sukurtas
+            Tavo serverio
             <br />
-            viskam atvirti
+            dešinė ranka
           </h1>
           <p className="hero__desc">
-            Galingas ir paprastas botas su funkcijomis, kurios padeda saugoti ir
-            tvarkyti jūsų bendruomenę — moderavimas, rolės, automatika ir
-            daugiau. Viskas ko reikia bendruomenės valdymui, apsaugai ir augimui
+            Lietuviškas Discord botas, kuris saugo nuo sukčių, skaičiuoja
+            lygius, tvarko tiketus ir pasveikina naujus narius. Viską
+            nustatai svetainėje — prisijungi su Discord ir pasirenki serverį.
           </p>
           <div className="hero__actions">
-            <a href="#invite" className="btn btn--gradient btn--hero-invite">
+            <Link to="/panel" className="btn btn--gradient btn--hero-invite">
               <img
                 src={discordIcon}
                 alt=""
@@ -466,10 +530,10 @@ export default function HomePage() {
                 width={20}
                 height={15}
               />
-              Įkelti į DISCORD
-            </a>
-            <a href="#komandos" className="btn btn--outline-magenta btn--hero-commands">
-              Žiūrėti komandas
+              Pridėti į Discord
+            </Link>
+            <a href="#funkcijos" className="btn btn--outline-magenta btn--hero-commands">
+              Žiūrėti funkcijas
               <span className="btn__arrow" aria-hidden="true">
                 <img src={ellipse} alt="" width={20} height={20} />
                 <img
@@ -485,7 +549,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="features" id="funkcijos">
+      <section className="features reveal" id="funkcijos">
         <div className="features__blur" aria-hidden="true" />
 
         <div className="features__shell" ref={shellRef}>
@@ -512,6 +576,8 @@ export default function HomePage() {
                   role="tab"
                   aria-selected={selected}
                   aria-controls="features-panel"
+                  aria-label={tab.label}
+                  title={tab.label}
                   id={`tab-${tab.id}`}
                   className={`features__tab${selected ? " features__tab--active" : ""}`}
                   data-tab={tab.id}
@@ -548,16 +614,48 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="cta" id="komandos">
+      <section className="why reveal" aria-labelledby="why-title">
+        <p className="why__kicker">Kodėl Solidus?</p>
+        <h2 className="why__title" id="why-title">
+          Viskas, ko reikia bendruomenei
+        </h2>
+        <div className="why__grid">
+          {HIGHLIGHTS.map((item) => (
+            <article key={item.title} className="why__card">
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="steps reveal" aria-labelledby="steps-title">
+        <h2 className="steps__title" id="steps-title">
+          Pradėk per minutę
+        </h2>
+        <ol className="steps__list">
+          {STEPS.map((step, i) => (
+            <li key={step.title} className="steps__item">
+              <span className="steps__num" aria-hidden="true">
+                {i + 1}
+              </span>
+              <h3>{step.title}</h3>
+              <p>{step.text}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section className="cta reveal" id="komandos">
         <h2 className="cta__title">Pasiruošę atnaujinti serverį?</h2>
 
         <div className="cta__action">
           <div className="cta__aura" aria-hidden="true">
             <img src={aura} alt="" />
           </div>
-          <a href="#invite" className="btn btn--gradient btn--cta">
+          <Link to="/panel" className="btn btn--gradient btn--cta">
             Pridėti SOLIDUS prie serverio
-          </a>
+          </Link>
         </div>
 
         <div className="cta__stats">
